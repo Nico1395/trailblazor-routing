@@ -3,7 +3,7 @@ using Trailblazor.Routing.Profiles;
 
 namespace Trailblazor.Routing.DependecyInjection;
 
-public static class RoutingExtensions
+public static class RoutingDependencyInjection
 {
     private static readonly Type _routingProfileInterfaceType = typeof(IRoutingProfile);
 
@@ -11,7 +11,6 @@ public static class RoutingExtensions
     {
         services.AddScoped<IRouteProvider, RouteProvider>();
         services.AddScoped<IRouteParser, RouteParser>();
-        services.AddScoped<IRouteAuthorizer, RouteAuthorizer>();
         services.AddScoped<IInternalRouteResolver, InternalRouteResolver>();
 
         var options = RouterOptions.Create();
@@ -35,5 +34,11 @@ public static class RoutingExtensions
     public static IServiceCollection AddRoutingProfile(this IServiceCollection services, Type profileType)
     {
         return services.AddSingleton(_routingProfileInterfaceType, profileType);
+    }
+
+    public static IServiceCollection AddRouteAuthorizer<TRouteAuthorizer>(this IServiceCollection services)
+        where TRouteAuthorizer : class, IRouteAuthorizer
+    {
+        return services.AddScoped<IRouteAuthorizer, TRouteAuthorizer>();
     }
 }

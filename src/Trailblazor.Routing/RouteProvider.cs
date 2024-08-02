@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.DependencyInjection;
+using Trailblazor.Routing.Extensions;
 using Trailblazor.Routing.Routes;
 
 namespace Trailblazor.Routing;
@@ -6,7 +8,7 @@ namespace Trailblazor.Routing;
 internal sealed class RouteProvider(
     IRouteParser _routeParser,
     IServiceProvider _serviceProvider,
-    INavigationService _navigationService,
+    NavigationManager _navigationManager,
     IInternalRouteResolver _internalRouteResolver) : IRouteProvider
 {
     private List<Route>? _routes;
@@ -36,13 +38,13 @@ internal sealed class RouteProvider(
 
     public Route? GetCurrentModule()
     {
-        var currentRelativeUri = _navigationService.GetCurrentRelativeUri();
+        var currentRelativeUri = _navigationManager.GetRelativeUri();
         return FindModuleInternal(currentRelativeUri);
     }
 
     public Route? GetCurrentRoute()
     {
-        var currentRelativeUri = _navigationService.GetCurrentRelativeUri();
+        var currentRelativeUri = _navigationManager.GetRelativeUri();
         return FindRoute(currentRelativeUri);
     }
 
