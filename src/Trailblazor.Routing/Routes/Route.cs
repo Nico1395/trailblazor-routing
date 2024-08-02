@@ -1,10 +1,11 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Trailblazor.Routing.Extensions;
 
 namespace Trailblazor.Routing.Routes;
 
 public record Route
 {
-    private readonly Dictionary<string, object?> _metadata = [];
+    private Dictionary<string, object?> _metadata = [];
 
     public List<string[]> Uris { get; internal set; } = [];
     public Route? Parent { get; internal set; }
@@ -71,6 +72,11 @@ public record Route
     public void SetMetadataValue(string key, object? value)
     {
         _metadata[key] = value;
+    }
+
+    internal void MergeMetadata(Dictionary<string, object?> other)
+    {
+        _metadata = _metadata.Merge(other);
     }
 
     private bool RouteSegmentsMatch(string[] ownedUriSegments, string[] otherUriSegments)

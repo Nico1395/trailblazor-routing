@@ -19,6 +19,18 @@ public sealed class RouteBuilder<TComponent>
         _route.Parent = parentRoute;
     }
 
+    public RouteBuilder<TComponent> WithMetadataValue(string key, object? value)
+    {
+        _route.SetMetadataValue(key, value);
+        return this;
+    }
+
+    public RouteBuilder<TComponent> WithMetadata(Dictionary<string, object?> metadata)
+    {
+        _route.MergeMetadata(metadata);
+        return this;
+    }
+
     // TODO -> Parse this here or dynamically when fetching?
     public RouteBuilder<TComponent> WithUri(string uri)
     {
