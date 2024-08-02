@@ -1,0 +1,76 @@
+﻿using Microsoft.Extensions.DependencyInjection;
+using Trailblazor.Routing.Routes;
+
+namespace Trailblazor.Routing;
+
+internal sealed class RouteProvider(
+    IRouteParser _routeParser,
+    IServiceProvider _serviceProvider,
+    INavigationService _navigationService,
+    IInternalRouteResolver _internalRouteResolver) : IRouteProvider
+{
+    private List<Route>? _routes;
+    private List<Route>? _moduleRoutes;
+    private IRouteAuthorizer? _routeAuthorizer;
+    private bool _routeAuthorizerResolved;
+
+    public IReadOnlyList<Route> GetRoutes()
+    {
+        return _routes ??= _internalRouteResolver.ResolveRoutes();
+    }
+
+    public IReadOnlyList<Route> GetAuthorizedRoutes()
+    {
+        return FilterAuthorizedInternal(GetRoutes());
+    }
+
+    public IReadOnlyList<Route> GetModules()
+    {
+        return _moduleRoutes ??= GetRoutes().Where(p => p.GetMetadataValue<bool>("is-module")).ToList();
+    }
+
+    public IReadOnlyList<Route> GetAuthorizedModules()
+    {
+        return FilterAuthorizedInternal(GetModules());
+    }
+
+    public Route? GetCurrentModule()
+    {
+        var currentRelativeUri = _navigationService.GetCurrentRelativeUri();
+        return FindModuleInternal(currentRelativeUri);
+    }
+
+    public Route? GetCurrentRoute()
+    {
+        var currentRelativeUri = _navigationService.GetCurrentRelativeUri();
+        return FindRoute(currentRelativeUri);
+    }
+
+    public Route? FindRoute(string relativeUri)
+    {
+        var uriSegments = _routeParser.ParseSegments(relativeUri);
+        return GetRoutes().Select(p => p.FindRoute(uriSegments)).Where(p => p != null).SingleOrDefault();
+    }
+
+    public bool IsCurrentRoute(Route page)
+    {
+        return GetCurrentRoute() == page;
+    }
+
+    private Route? FindModuleInternal(string relativeUri)
+    {
+        var uriSegments = _routeParser.ParseSegments(relativeUri);
+        return GetModules().SingleOrDefault(m => m.FindRoute(uriSegments) != null);
+    }
+
+    private IReadOnlyList<Route> FilterAuthorizedInternal(IReadOnlyList<Route> routes)
+    {
+        _routeAuthorizer ??= !_routeAuthorizerResolved ? _serviceProvider.GetService<IRouteAuthorizer>() : null;
+        _routeAuthorizerResolved = true;
+
+        if (_routeAuthorizer == null)
+            return routes;
+
+        return routes.Where(_routeAuthorizer.Authorize).ToList();
+    }
+}
