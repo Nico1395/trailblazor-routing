@@ -6,7 +6,7 @@ namespace Trailblazor.Routing.Profiles;
 /// Framework internal navigation profile.
 /// </summary>
 /// <remarks>
-/// This profile is used to internally register single routes during the dependency injection registrations. This profile will be used during startup only.
+/// This profile is used to internally register routes during the dependency injection registration process. This profile will be used during the startup only.
 /// </remarks>
 internal sealed class InternalRoutingProfile : RoutingProfileBase
 {
@@ -18,6 +18,10 @@ internal sealed class InternalRoutingProfile : RoutingProfileBase
             configuration.AddRoute(route);
     }
 
+    /// <summary>
+    /// Internally adds the specified <paramref name="route"/> to the profile.
+    /// </summary>
+    /// <param name="route">Route to be added.</param>
     internal void AddRoute(Route route)
     {
         route.Uri = route.Uri.TrimStart('/');

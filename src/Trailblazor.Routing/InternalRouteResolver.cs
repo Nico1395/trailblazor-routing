@@ -1,25 +1,22 @@
-﻿using Trailblazor.Routing.DependecyInjection;
+﻿using Trailblazor.Routing.DependencyInjection;
 using Trailblazor.Routing.Profiles;
 using Trailblazor.Routing.Routes;
 
 namespace Trailblazor.Routing;
 
-internal sealed class InternalRouteResolver(
-    IRouteParser _routeParser,
-    IEnumerable<IRoutingProfile> _routingProfiles) : IInternalRouteResolver
+/// <summary>
+/// Service manages resolving navigation profiles and their configured routes internally.
+/// </summary>
+internal sealed class InternalRouteResolver(IEnumerable<IRoutingProfile> _routingProfiles) : IInternalRouteResolver
 {
-    private readonly RouteRegistrationSecurityManager _registrationSecurityManager = RouteRegistrationSecurityManager.New();
-    private List<Route>? _configuredRoutes;
-
+    /// <summary>
+    /// Resolves configured routes internally and returns them.
+    /// </summary>
+    /// <returns>Resolved configured routes.</returns>
     public List<Route> ResolveRoutes()
     {
-        return _configuredRoutes ??= ResolveInternal();
-    }
-
-    private List<Route> ResolveInternal()
-    {
-        var routes = _routingProfiles.SelectMany(p => p.ConfigureInternal(_routeParser).GetConfiguredRoutes()).ToList();
-        _registrationSecurityManager.SecurityCheckRoutes(routes);
+        var routes = _routingProfiles.SelectMany(p => p.ComposeConfigurationInternal().GetConfiguredRoutes()).ToList();
+        RouteRegistrationSecurityManager.New().SecurityCheckRoutes(routes);
 
         return routes;
     }

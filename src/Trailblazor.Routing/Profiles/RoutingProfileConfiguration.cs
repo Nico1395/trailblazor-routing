@@ -5,23 +5,19 @@ namespace Trailblazor.Routing.Profiles;
 
 public record RoutingProfileConfiguration
 {
-    private readonly IRouteParser _routeParser;
     private readonly List<Route> _routes = [];
 
-    private RoutingProfileConfiguration(IRouteParser routeParser)
-    {
-        _routeParser = routeParser;
-    }
+    private RoutingProfileConfiguration() { }
 
-    internal static RoutingProfileConfiguration Create(IRouteParser routeParser)
+    internal static RoutingProfileConfiguration Create()
     {
-        return new RoutingProfileConfiguration(routeParser);
+        return new RoutingProfileConfiguration();
     }
 
     public RoutingProfileConfiguration AddRoute<TComponent>(Action<RouteBuilder<TComponent>> builderAction)
         where TComponent : IComponent
     {
-        var builder = new RouteBuilder<TComponent>(_routeParser);
+        var builder = new RouteBuilder<TComponent>();
         builderAction.Invoke(builder);
 
         _routes.Add(builder.Build());

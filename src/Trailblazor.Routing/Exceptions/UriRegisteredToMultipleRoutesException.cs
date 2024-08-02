@@ -6,11 +6,6 @@
 /// </summary>
 public sealed class UriRegisteredToMultipleRoutesException : Exception
 {
-    /// <summary>
-    /// Internal constructor preventing users from misusing this very specific exception.
-    /// </summary>
-    /// <param name="uri">Duplicate URI.</param>
-    /// <param name="duplicateComponents">Component types that share the same <paramref name="uri"/>.</param>
     internal UriRegisteredToMultipleRoutesException(string uri, List<Type> duplicateComponents)
         : base($"URI '{uri}' is registered to multiple components: {string.Join(", ", duplicateComponents.Select(t => t.Name))}")
     {
