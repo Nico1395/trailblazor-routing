@@ -1,10 +1,13 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Routing;
+using Trailblazor.Routing.DependencyInjection;
 using Trailblazor.Routing.Extensions;
-using Trailblazor.Routing.Routes;
 
 namespace Trailblazor.Routing;
 
+/// <summary>
+/// Trailblazor Router component. Orchestrates routing using the configured <see cref="RoutingOptions"/> and router profiles.
+/// </summary>
 public class TrailblazorRouter : IComponent, IHandleAfterRender, IDisposable
 {
     private RenderHandle _renderHandle;
@@ -23,12 +26,21 @@ public class TrailblazorRouter : IComponent, IHandleAfterRender, IDisposable
     [Inject]
     private IRouteParser RouteParser { get; set; } = null!;
 
+    /// <summary>
+    /// Required render fragment that is being rendered if a route has been found for the current relative URI.
+    /// </summary>
     [Parameter, EditorRequired]
     public required RenderFragment<RouteData> Found { get; set; }
 
+    /// <summary>
+    /// Required render fragment that is being rendered if no route has been found for the current relative URI.
+    /// </summary>
     [Parameter, EditorRequired]
     public required RenderFragment NotFound { get; set; }
 
+    /// <summary>
+    /// Required type of the main layout component to be used. This type has to derive from the <see cref="LayoutComponentBase"/>.
+    /// </summary>
     [Parameter, EditorRequired]
     public required Type LayoutType { get; set; }
 

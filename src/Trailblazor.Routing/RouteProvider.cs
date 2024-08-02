@@ -1,78 +1,63 @@
 ﻿using Microsoft.AspNetCore.Components;
-using Microsoft.Extensions.DependencyInjection;
 using Trailblazor.Routing.Extensions;
 using Trailblazor.Routing.Routes;
 
 namespace Trailblazor.Routing;
 
+/// <summary>
+/// Service provides registered routes.
+/// </summary>
 internal sealed class RouteProvider(
     IRouteParser _routeParser,
-    IServiceProvider _serviceProvider,
-    NavigationManager _navigationManager,
-    IInternalRouteResolver _internalRouteResolver) : IRouteProvider
+    IInternalRouteResolver _internalRouteResolver,
+    NavigationManager _navigationManager) : IRouteProvider
 {
+    /// <summary>
+    /// Routes cached after resolving using the <see cref="_internalRouteResolver"/>.
+    /// </summary>
     private List<Route>? _routes;
-    private List<Route>? _moduleRoutes;
-    private IRouteAuthorizer? _routeAuthorizer;
-    private bool _routeAuthorizerResolved;
 
+    /// <summary>
+    /// Method returns all registered routes.
+    /// </summary>
+    /// <returns>All registered routes.</returns>
     public IReadOnlyList<Route> GetRoutes()
     {
         return _routes ??= _internalRouteResolver.ResolveRoutes();
     }
 
-    public IReadOnlyList<Route> GetAuthorizedRoutes()
-    {
-        return FilterAuthorizedInternal(GetRoutes());
-    }
-
-    public IReadOnlyList<Route> GetModules()
-    {
-        return _moduleRoutes ??= GetRoutes().Where(p => p.GetMetadataValue<bool>("is-module")).ToList();
-    }
-
-    public IReadOnlyList<Route> GetAuthorizedModules()
-    {
-        return FilterAuthorizedInternal(GetModules());
-    }
-
-    public Route? GetCurrentModule()
-    {
-        var currentRelativeUri = _navigationManager.GetRelativeUri();
-        return FindModuleInternal(currentRelativeUri);
-    }
-
+    /// <summary>
+    /// Method returns the route for the current URI.
+    /// </summary>
+    /// <remarks>
+    /// Standard query parameters with standard query parameter syntax will be removed and the resulting URI will be used
+    /// to find the current route. Make sure to use query parameters with standard syntax ('my-route?myParameter=myValue').
+    /// </remarks>
+    /// <returns>Current route if any route has been registered for the current URI.</returns>
     public Route? GetCurrentRoute()
     {
         var currentRelativeUri = _navigationManager.GetRelativeUri();
         return FindRoute(currentRelativeUri);
     }
 
+    /// <summary>
+    /// Method finds the route registered to the specified <paramref name="relativeUri"/>.
+    /// </summary>
+    /// <param name="relativeUri">Relative URI whose associated route is to be searched for.</param>
+    /// <returns>Route if found.</returns>
     public Route? FindRoute(string relativeUri)
     {
         relativeUri = _routeParser.RemoveQueryParameters(relativeUri);
         return GetRoutes().Select(p => p.FindRoute(relativeUri)).Where(p => p != null).SingleOrDefault();
     }
 
-    public bool IsCurrentRoute(Route page)
+    /// <summary>
+    /// Method determines whether the specified <paramref name="route"/> is the current route.
+    /// </summary>
+    /// <param name="route">Route to be checked for.</param>
+    /// <returns><see langword="true"/> if the specified <paramref name="route"/> is the current route.</returns>
+    public bool IsCurrentRoute(Route route)
     {
-        return GetCurrentRoute() == page;
-    }
-
-    private Route? FindModuleInternal(string relativeUri)
-    {
-        relativeUri = _routeParser.RemoveQueryParameters(relativeUri);
-        return GetModules().SingleOrDefault(m => m.FindRoute(relativeUri) != null);
-    }
-
-    private IReadOnlyList<Route> FilterAuthorizedInternal(IReadOnlyList<Route> routes)
-    {
-        _routeAuthorizer ??= !_routeAuthorizerResolved ? _serviceProvider.GetService<IRouteAuthorizer>() : null;
-        _routeAuthorizerResolved = true;
-
-        if (_routeAuthorizer == null)
-            return routes;
-
-        return routes.Where(_routeAuthorizer.Authorize).ToList();
+        return GetCurrentRoute() == route;
     }
 }

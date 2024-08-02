@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using Trailblazor.Routing.DependecyInjection;
+using Trailblazor.Routing.DependencyInjection;
 
 namespace Trailblazor.Routing.App;
 
@@ -14,7 +14,7 @@ public class Program
         builder.RootComponents.Add<HeadOutlet>("head::after");
 
         builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
-        builder.Services.AddRouting(options =>
+        builder.Services.AddTrailblazorRouting(options =>
         {
             options.AddProfilesFromAssemblies(typeof(Program).Assembly);
         });
