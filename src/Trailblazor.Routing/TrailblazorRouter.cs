@@ -1,16 +1,18 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Routing;
+using Trailblazor.Routing.Extensions;
+using Trailblazor.Routing.Routes;
 
 namespace Trailblazor.Routing;
 
-public class CustomRouter : IRouter
+public class TrailblazorRouter : IComponent, IHandleAfterRender, IDisposable
 {
     private RenderHandle _renderHandle;
     private bool _navigationInterceptionEnabled;
     private string? _location;
 
     [Inject]
-    private INavigationService NavigationService { get; set; } = null!;
+    private NavigationManager NavigationManager { get; set; } = null!;
 
     [Inject]
     private INavigationInterception NavigationInterception { get; set; } = null!;
@@ -32,15 +34,15 @@ public class CustomRouter : IRouter
 
     public void Dispose()
     {
-        NavigationService.UnsubscribeLocationChanged(OnLocationChanged);
+        NavigationManager.LocationChanged -= OnLocationChanged;
     }
 
     public void Attach(RenderHandle renderHandle)
     {
         _renderHandle = renderHandle;
-        _location = NavigationService.GetCurrentUri();
+        _location = NavigationManager.GetRelativeUri();
 
-        NavigationService.SubscribeLocationChanged(OnLocationChanged);
+        NavigationManager.LocationChanged += OnLocationChanged;
     }
 
     public Task SetParametersAsync(ParameterView parameters)
@@ -74,12 +76,17 @@ public class CustomRouter : IRouter
         if (_location == null)
             return;
 
-        var relativeUri = NavigationService.GetCurrentRelativeUri();
+        var relativeUri = NavigationManager.GetRelativeUri();
         var route = RouteProvider.GetCurrentRoute();
 
         if (route != null)
-            _renderHandle.Render(Found(new RouteData(route.Component, RouteParser.ParseQueryParameters(relativeUri))));
+            _renderHandle.Render(Found(CreateRouteData(route, relativeUri)));
         else
             _renderHandle.Render(NotFound);
+    }
+
+    private RouteData CreateRouteData(Route route, string relativeUri)
+    {
+        return new RouteData(route.Component, RouteParser.ParseQueryParameters(relativeUri));
     }
 }
