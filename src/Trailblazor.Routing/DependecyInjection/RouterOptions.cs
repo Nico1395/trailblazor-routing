@@ -34,7 +34,8 @@ public sealed class RouterOptions
 
                 route.SetMetadataValue(MetadataConstants.FromPageDirective, true);
                 return route;
-            });
+            })
+            .ToList();
 
         foreach (var route in routes)
             _internalRoutingProfile.AddRoute(route);

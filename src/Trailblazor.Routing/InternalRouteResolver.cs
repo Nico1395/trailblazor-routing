@@ -1,4 +1,5 @@
-﻿using Trailblazor.Routing.Profiles;
+﻿using Trailblazor.Routing.DependecyInjection;
+using Trailblazor.Routing.Profiles;
 using Trailblazor.Routing.Routes;
 
 namespace Trailblazor.Routing;
@@ -7,6 +8,7 @@ internal sealed class InternalRouteResolver(
     IRouteParser _routeParser,
     IEnumerable<IRoutingProfile> _routingProfiles) : IInternalRouteResolver
 {
+    private readonly RouteRegistrationSecurityManager _registrationSecurityManager = RouteRegistrationSecurityManager.New();
     private List<Route>? _configuredRoutes;
 
     public List<Route> ResolveRoutes()
@@ -16,6 +18,9 @@ internal sealed class InternalRouteResolver(
 
     private List<Route> ResolveInternal()
     {
-        return _routingProfiles.SelectMany(p => p.ConfigureInternal(_routeParser).GetConfiguredRoutes()).ToList();
+        var routes = _routingProfiles.SelectMany(p => p.ConfigureInternal(_routeParser).GetConfiguredRoutes()).ToList();
+        _registrationSecurityManager.SecurityCheckRoutes(routes);
+
+        return routes;
     }
 }
