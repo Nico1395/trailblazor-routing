@@ -7,7 +7,7 @@ public record Route
 {
     private Dictionary<string, object?> _metadata = [];
 
-    public List<string[]> Uris { get; internal set; } = [];
+    public string Uri { get; internal set; } = string.Empty;
     public Route? Parent { get; internal set; }
     public List<Route> Children { get; internal set; } = [];
     public required Type Component { get; init; }
@@ -21,39 +21,19 @@ public record Route
         };
     }
 
-    public Route? FindRoute(string[] uriSegments)
+    public Route? FindRoute(string uri)
     {
-        if (LinkedToUri(uriSegments))
+        if (Uri == uri)
             return this;
 
         foreach (var subPage in Children)
         {
-            var activePage = subPage.FindRoute(uriSegments);
+            var activePage = subPage.FindRoute(uri);
             if (activePage != null)
                 return activePage;
         }
 
         return null;
-    }
-
-    public bool LinkedToUri(string[] uriSegments)
-    {
-        return Uris.Any(u => RouteSegmentsMatch(u, uriSegments));
-    }
-
-    public string? GetPrimaryUri()
-    {
-        return GetUriAt(0);
-    }
-
-    public string? GetUriAt(int index)
-    {
-        var hasEnoughUris = Uris.Count - 1 >= index;
-        if (!hasEnoughUris)
-            return null;
-
-        var uriSegments = Uris[index];
-        return string.Join('/', uriSegments);
     }
 
     public IReadOnlyDictionary<string, object?> GetMetadata()

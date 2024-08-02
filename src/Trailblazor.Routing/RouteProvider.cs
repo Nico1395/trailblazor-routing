@@ -50,8 +50,8 @@ internal sealed class RouteProvider(
 
     public Route? FindRoute(string relativeUri)
     {
-        var uriSegments = _routeParser.ParseSegments(relativeUri);
-        return GetRoutes().Select(p => p.FindRoute(uriSegments)).Where(p => p != null).SingleOrDefault();
+        relativeUri = _routeParser.RemoveQueryParameters(relativeUri);
+        return GetRoutes().Select(p => p.FindRoute(relativeUri)).Where(p => p != null).SingleOrDefault();
     }
 
     public bool IsCurrentRoute(Route page)
@@ -61,8 +61,8 @@ internal sealed class RouteProvider(
 
     private Route? FindModuleInternal(string relativeUri)
     {
-        var uriSegments = _routeParser.ParseSegments(relativeUri);
-        return GetModules().SingleOrDefault(m => m.FindRoute(uriSegments) != null);
+        relativeUri = _routeParser.RemoveQueryParameters(relativeUri);
+        return GetModules().SingleOrDefault(m => m.FindRoute(relativeUri) != null);
     }
 
     private IReadOnlyList<Route> FilterAuthorizedInternal(IReadOnlyList<Route> routes)
