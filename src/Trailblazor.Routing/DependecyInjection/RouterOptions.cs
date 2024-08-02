@@ -1,4 +1,6 @@
-﻿using System.Reflection;
+﻿using Microsoft.AspNetCore.Components;
+using System.Reflection;
+using Trailblazor.Routing.Constants;
 using Trailblazor.Routing.Profiles;
 using Trailblazor.Routing.Routes;
 
@@ -10,6 +12,36 @@ public sealed class RouterOptions
 
     private readonly List<Type> _routingProfileTypes = [];
     private readonly InternalRoutingProfile _internalRoutingProfile = new();
+
+    /// <summary>
+    /// Method registers all components with an '@page' directive or <see cref="RouteAttribute"/> to the <see cref="RouterOptions"/>.
+    /// </summary>
+    /// <param name="assemblies">Assemblies to scan in.</param>
+    /// <returns><see cref="RouterOptions"/> for further configuration.</returns>
+    public RouterOptions ScanForComponentsInAssemblies(params Assembly[] assemblies)
+    {
+        var componentBaseType = typeof(ComponentBase);
+        var routes = assemblies
+            .SelectMany(a => a.GetTypes())
+            .Where(t => !t.IsAbstract && t.IsAssignableTo(componentBaseType) && t.GetCustomAttributes<RouteAttribute>().Any())
+            .Select(type =>
+            {
+                var routeSegments = type.GetCustomAttribute<RouteAttribute>()!.Template.Trim().Split('/', StringSplitOptions.RemoveEmptyEntries);
+                var route = new Route()
+                {
+                    Uris = [routeSegments],
+                    Component = type,
+                };
+
+                route.SetMetadataValue(MetadataConstants.FromPageDirective, true);
+                return route;
+            });
+
+        foreach (var route in routes)
+            _internalRoutingProfile.AddRoute(route);
+
+        return this;
+    }
 
     public RouterOptions AddProfilesFromAssemblies(params Assembly[] assemblies)
     {
