@@ -11,7 +11,7 @@ public sealed class RouterOptions
     private readonly List<Type> _routingProfileTypes = [];
     private readonly InternalRoutingProfile _internalRoutingProfile = new();
 
-    public RouterOptions AddProfilesFromAssemblies(Assembly[] assemblies)
+    public RouterOptions AddProfilesFromAssemblies(params Assembly[] assemblies)
     {
         var profileBaseType = typeof(RoutingProfileBase);
         var internalProfileType = typeof(InternalRoutingProfile);

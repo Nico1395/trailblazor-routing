@@ -7,17 +7,17 @@ public static class RoutingDependencyInjection
 {
     private static readonly Type _routingProfileInterfaceType = typeof(IRoutingProfile);
 
-    public static IServiceCollection AddRouting(this IServiceCollection services, Action<RouterOptions> optionsAction)
+    public static IServiceCollection AddRouting(this IServiceCollection services, Action<RouterOptions>? optionsAction = null)
     {
         services.AddScoped<IRouteProvider, RouteProvider>();
         services.AddScoped<IRouteParser, RouteParser>();
         services.AddScoped<IInternalRouteResolver, InternalRouteResolver>();
 
         var options = RouterOptions.Create();
-        optionsAction.Invoke(options);
+        optionsAction?.Invoke(options);
         services.AddSingleton(options);
 
-        var routingProfiles = options.GetProfileTypesInternal();
+        var routingProfiles = options.GetProfileTypesInternal().Distinct();
 
         services.AddSingleton(_routingProfileInterfaceType, options.GetInternalRoutingProfile());
         foreach (var profileType in routingProfiles)
