@@ -1,4 +1,7 @@
-﻿@inherits LayoutComponentBase
+﻿@using Trailblazor.Routing.Routes
+
+@inherits LayoutComponentBase
+
 <div class="page">
     <div class="sidebar">
         <NavMenu />
@@ -14,3 +17,13 @@
         </article>
     </main>
 </div>
+
+@code {
+    [CascadingParameter]
+    public required RouterContext RouterContext { get; set; }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+    }
+}

@@ -34,6 +34,26 @@ public record RoutingProfileConfiguration
         return this;
     }
 
+    public RoutingProfileConfiguration RemoveRouteByUri(string uri)
+    {
+        var route = _routes.FirstOrDefault(r => r.Uri == uri);
+        if (route != null)
+            _routes.Remove(route);
+
+        return this;
+    }
+
+    public RoutingProfileConfiguration RemoveRouteByMetadataValue(string key, object? value)
+    {
+        var route = _routes.FirstOrDefault(r => r.GetMetadata().Any(k => k.Key == key && k.Value == value));
+        if (route != null)
+            _routes.Remove(route);
+
+        return this;
+    }
+
+    // TODO -> Editing
+
     internal List<Route> GetConfiguredRoutes()
     {
         return _routes;

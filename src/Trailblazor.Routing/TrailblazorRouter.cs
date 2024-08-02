@@ -77,16 +77,25 @@ public class TrailblazorRouter : IComponent, IHandleAfterRender, IDisposable
             return;
 
         var relativeUri = NavigationManager.GetRelativeUri();
-        var route = RouteProvider.GetCurrentRoute();
+        var routerContext = RouterContext.Create(
+            relativeUri,
+            RouteParser.ParseQueryParameters(relativeUri),
+            RouteProvider.GetCurrentRoute());
 
-        if (route != null)
-            _renderHandle.Render(Found(CreateRouteData(route, relativeUri)));
-        else
-            _renderHandle.Render(NotFound);
+        Render(routerContext);
     }
 
-    private RouteData CreateRouteData(Route route, string relativeUri)
+    private void Render(RouterContext routerContext)
     {
-        return new RouteData(route.Component, RouteParser.ParseQueryParameters(relativeUri));
+        _renderHandle.Render(builder =>
+        {
+            builder.OpenComponent<CascadingValue<RouterContext>>(0);
+            builder.AddComponentParameter(1, nameof(CascadingValue<RouterContext>.Value), routerContext);
+            builder.AddComponentParameter(2, nameof(CascadingValue<RouterContext>.ChildContent), (RenderFragment)(content =>
+            {
+                content.AddContent(2, routerContext.Route != null ? Found(routerContext.RouteData) : NotFound);
+            }));
+            builder.CloseComponent();
+        });
     }
 }
