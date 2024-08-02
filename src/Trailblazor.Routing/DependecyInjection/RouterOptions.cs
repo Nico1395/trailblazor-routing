@@ -26,10 +26,9 @@ public sealed class RouterOptions
             .Where(t => !t.IsAbstract && t.IsAssignableTo(componentBaseType) && t.GetCustomAttributes<RouteAttribute>().Any())
             .Select(type =>
             {
-                var routeSegments = type.GetCustomAttribute<RouteAttribute>()!.Template.Trim().Split('/', StringSplitOptions.RemoveEmptyEntries);
                 var route = new Route()
                 {
-                    Uris = [routeSegments],
+                    Uri = type.GetCustomAttribute<RouteAttribute>()!.Template,
                     Component = type,
                 };
 

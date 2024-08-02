@@ -20,6 +20,7 @@ internal sealed class InternalRoutingProfile : RoutingProfileBase
 
     internal void AddRoute(Route route)
     {
+        route.Uri = route.Uri.TrimStart('/');
         _routes.Add(route);
     }
 }

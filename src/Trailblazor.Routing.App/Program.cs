@@ -16,7 +16,7 @@ public class Program
         builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
         builder.Services.AddRouting(options =>
         {
-            options.ScanForComponentsInAssemblies(typeof(Program).Assembly);
+            options.AddProfilesFromAssemblies(typeof(Program).Assembly);
         });
 
         await builder.Build().RunAsync();

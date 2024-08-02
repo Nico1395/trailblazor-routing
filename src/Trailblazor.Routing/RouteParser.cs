@@ -20,18 +20,24 @@ internal sealed class RouteParser : IRouteParser
 
     public string[] ParseSegments(string uri)
     {
-        if (uri.IndexOf('?') > -1)
-            uri = uri.Substring(0, uri.IndexOf('?'));
+        return RemoveQueryParameters(uri).Split('/', StringSplitOptions.RemoveEmptyEntries);
+    }
 
-        var segments = uri.Trim().Split('/', StringSplitOptions.RemoveEmptyEntries);
-        return segments;
+    public string RemoveQueryParameters(string uri)
+    {
+        if (!uri.Contains('?'))
+            return uri;
+
+        return uri.Substring(0, uri.IndexOf('?'));
     }
 
     public Dictionary<string, object?> ParseQueryParameters(string uri)
     {
+        var queryParametersString = uri.Substring(uri.IndexOf("?") + 1);
+        var queryParameterPairs = queryParametersString.Split('&', StringSplitOptions.RemoveEmptyEntries);
         var queryParameters = new Dictionary<string, object?>();
 
-        foreach (var queryParameterPair in uri.Substring(uri.IndexOf("?") + 1).Split('&', StringSplitOptions.RemoveEmptyEntries))
+        foreach (var queryParameterPair in queryParameterPairs)
         {
             if (queryParameterPair != string.Empty && queryParameterPair.Contains('='))
             {

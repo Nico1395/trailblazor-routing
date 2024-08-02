@@ -31,10 +31,9 @@ public sealed class RouteBuilder<TComponent>
         return this;
     }
 
-    // TODO -> Parse this here or dynamically when fetching?
     public RouteBuilder<TComponent> WithUri(string uri)
     {
-        _route.Uris = [_routeParser.ParseSegments(uri)];
+        _route.Uri = uri.TrimStart('/');
         return this;
     }
 
