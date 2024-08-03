@@ -6,7 +6,7 @@ on:
     - "main"
 
 env:
-  PROJECT_SOLUTION: "src/Trailblazor.Routing.sln"
+  TEST_PROJECT: "src/Trailblazor.Routing.Tests/Trailblazor.Routing.Tests.csproj"
 
 jobs:
   test:
@@ -24,10 +24,10 @@ jobs:
         dotnet-version: 8.0.x
 
     - name: "Restore dependencies"
-      run: "dotnet restore ${{ env.PROJECT_SOLUTION }}"
+      run: "dotnet restore ${{ env.TEST_PROJECT }}"
 
     - name: "Build project"
-      run: "dotnet build ${{ env.PROJECT_SOLUTION }} --no-restore --configuration Release"
+      run: "dotnet build ${{ env.TEST_PROJECT }} --no-restore --configuration Release"
 
     - name: "Run tests"
-      run: "dotnet test ${{ env.PROJECT_SOLUTION }} --no-restore --no-build"
+      run: "dotnet test ${{ env.TEST_PROJECT }} --no-restore --no-build --configuration Release"

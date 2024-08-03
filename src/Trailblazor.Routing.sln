@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trailblazor.Routing.App", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trailblazor.Routing", "Trailblazor.Routing\Trailblazor.Routing.csproj", "{B7DDC13B-CB31-44EF-AD34-F3130BCB0B1A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trailblazor.Tests", "Trailblazor.Tests\Trailblazor.Tests.csproj", "{04DD166E-90F3-4713-807C-8204ACF68B35}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trailblazor.Routing.Tests", "Trailblazor.Routing.Tests\Trailblazor.Routing.Tests.csproj", "{04DD166E-90F3-4713-807C-8204ACF68B35}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Apps", "Apps", "{80646991-13A2-4E34-97DC-DD3C806794DB}"
 EndProject
