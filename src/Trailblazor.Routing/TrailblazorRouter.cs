@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Components.Routing;
 using Trailblazor.Routing.DependencyInjection;
 using Trailblazor.Routing.Extensions;
-using Trailblazor.Routing.Routes;
 
 namespace Trailblazor.Routing;
 
@@ -22,10 +21,7 @@ public class TrailblazorRouter : IComponent, IHandleAfterRender, IDisposable
     private INavigationInterception NavigationInterception { get; set; } = null!;
 
     [Inject]
-    private IRouteProvider RouteProvider { get; set; } = null!;
-
-    [Inject]
-    private IRouteParser RouteParser { get; set; } = null!;
+    private IInternalRouterContextManager RouterContextManager { get; set; } = null!;
 
     /// <summary>
     /// Required render fragment that is being rendered if a route has been found for the current relative URI.
@@ -110,24 +106,15 @@ public class TrailblazorRouter : IComponent, IHandleAfterRender, IDisposable
         if (_location == null)
             return;
 
-        var relativeUri = NavigationManager.GetRelativeUri();
-        var routerContext = RouterContext.Create(
-            relativeUri,
-            RouteParser.ParseQueryParameters(relativeUri),
-            RouteProvider.GetCurrentRoute());
+        var routerContext = RouterContextManager.UpdateAndGetRouterContext();
 
-        Render(routerContext);
-    }
-
-    private void Render(RouterContext routerContext)
-    {
         _renderHandle.Render(builder =>
         {
             builder.OpenComponent<CascadingValue<RouterContext>>(0);
             builder.AddComponentParameter(1, nameof(CascadingValue<RouterContext>.Value), routerContext);
             builder.AddComponentParameter(2, nameof(CascadingValue<RouterContext>.ChildContent), (RenderFragment)(content =>
             {
-                content.AddContent(2, routerContext.Route != null ? Found(routerContext.RouteData) : NotFound);
+                content.AddContent(2, routerContext.RouteData != null ? Found(routerContext.RouteData) : NotFound);
             }));
             builder.CloseComponent();
         });
