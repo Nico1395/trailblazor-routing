@@ -1,4 +1,4 @@
-name: "Deploy NuGet Package"
+name: "Deploy NuGet package"
 
 on:
   release:
@@ -30,9 +30,9 @@ jobs:
 
     - name: "Build project"
       run: "dotnet build ${{ env.PROJECT_SOLUTION }} --no-restore --configuration Release"
-
-    # - name: "Run tests"
-    #   run: "dotnet test --no-build --verbosity normal"
+      
+    - name: "Run tests"
+      run: "dotnet test ${{ env.PROJECT_SOLUTION }} --no-restore --no-build"
 
     - name: "Pack project"
       run: "dotnet pack ${{ env.PROJECT_SOLUTION }} --no-restore --no-build --configuration Release --include-symbols -p:PackageVersion=${{ github.ref_name }} --output ${{ env.PACK_OUTPUT_DIRECTORY }}"
