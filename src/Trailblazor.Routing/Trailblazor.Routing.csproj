@@ -9,10 +9,11 @@
     <PropertyGroup>
         <EnablePackageValidation>true</EnablePackageValidation>
         <GenerateDocumentationFile>True</GenerateDocumentationFile>
+        <PackageId>Trailblazor.Routing</PackageId>
         <Authors>Nicolai Wolf</Authors>
         <Description>Flexible and configurable routing framework for Blazor applications.</Description>
         <RepositoryUrl>https://github.com/Nico1395/trailblazor-routing</RepositoryUrl>
-        <PackageTags>Blazor, Routing</PackageTags>
+        <PackageTags>Blazor;Routing</PackageTags>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <!-- TODO -> README.md -->
     </PropertyGroup>
