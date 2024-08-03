@@ -103,6 +103,25 @@ public record Route
     }
 
     /// <summary>
+    /// Method removes the routes metadata value with the specified <paramref name="key"/>.
+    /// </summary>
+    /// <param name="key">Key of the metadata value that is to be removed.</param>
+    public void RemoveMetadataValue(string key)
+    {
+        _metadata.Remove(key);
+    }
+
+    /// <summary>
+    /// Method determines whether the route has a metadata value with the specified <paramref name="key"/>.
+    /// </summary>
+    /// <param name="key">Key that is to be checked for.</param>
+    /// <returns><see langword="true"/> if the routes metadata contains a value with the specified <paramref name="key"/>.</returns>
+    public bool HasMetadataValue(string key)
+    {
+        return _metadata.ContainsKey(key);
+    }
+
+    /// <summary>
     /// Method internally merges the routes metadata with <paramref name="other"/> metadata.
     /// </summary>
     /// <param name="other">Other metadata to be merged into the routes metadata.</param>
