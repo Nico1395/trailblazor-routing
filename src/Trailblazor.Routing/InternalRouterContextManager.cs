@@ -17,12 +17,13 @@ internal sealed class InternalRouterContextManager(
 
     public RouterContext UpdateAndGetRouterContext()
     {
-        var relativeUri = _navigationManager.GetRelativeUri();
-        var queryParameters = _routeParser.ParseQueryParameters(relativeUri);
-        var cleanRelativeUri = _routeParser.RemoveQueryParameters(relativeUri);
-        var route = _routeProvider.FindRoute(cleanRelativeUri);
+        var relativeUriWithParameters = _navigationManager.GetRelativeUri();
+        var relativeUri = _routeParser.RemoveQueryParameters(relativeUriWithParameters);
+        var queryParameters = _routeParser.ParseQueryParameters(relativeUriWithParameters);
+        var route = _routeProvider.FindRoute(relativeUri);
 
         return _internalRouterContext = RouterContext.New(
+            relativeUriWithParameters,
             relativeUri,
             queryParameters,
             route);
