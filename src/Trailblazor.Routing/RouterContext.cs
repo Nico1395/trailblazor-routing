@@ -28,9 +28,9 @@ public sealed record RouterContext
     /// <summary>
     /// Route data for the URI.
     /// </summary>
-    public required RouteData RouteData { get; init; }
+    public required RouteData? RouteData { get; init; }
 
-    internal static RouterContext Create(string relativeUri, Dictionary<string, object?> queryParameters, Route? route)
+    internal static RouterContext New(string relativeUri, Dictionary<string, object?> queryParameters, Route? route)
     {
         return new RouterContext()
         {
@@ -41,8 +41,23 @@ public sealed record RouterContext
         };
     }
 
-    private static RouteData CreateRouteData(Route route, Dictionary<string, object?> queryParameters)
+    internal static RouterContext Empty()
     {
+        var route = Route.Empty<IComponent>();
+        return new RouterContext()
+        {
+            RelativeUri = string.Empty,
+            QueryParameters = [],
+            Route = route,
+            RouteData = CreateRouteData(route, []),
+        };
+    }
+
+    private static RouteData? CreateRouteData(Route? route, Dictionary<string, object?> queryParameters)
+    {
+        if (route == null)
+            return null;
+
         return new RouteData(route.Component, queryParameters);
     }
 }

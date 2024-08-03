@@ -21,6 +21,8 @@ public static class RoutingDependencyInjection
         services.AddScoped<IRouteProvider, RouteProvider>();
         services.AddScoped<IRouteParser, RouteParser>();
         services.AddScoped<IInternalRouteResolver, InternalRouteResolver>();
+        services.AddScoped<IInternalRouterContextManager, InternalRouterContextManager>();
+        services.AddScoped<IRouterContextAccessor, RouterContextAccessor>();
 
         var options = RoutingOptions.New();
         optionsAction?.Invoke(options);
