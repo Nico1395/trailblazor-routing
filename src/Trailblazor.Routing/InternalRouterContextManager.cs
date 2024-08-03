@@ -19,7 +19,7 @@ internal sealed class InternalRouterContextManager(
     {
         var relativeUriWithParameters = _navigationManager.GetRelativeUri();
         var relativeUri = _routeParser.RemoveQueryParameters(relativeUriWithParameters);
-        var queryParameters = _routeParser.ParseQueryParameters(relativeUriWithParameters);
+        var queryParameters = _routeParser.ExtractQueryParameters(relativeUriWithParameters);
         var route = _routeProvider.FindRoute(relativeUri);
 
         return _internalRouterContext = RouterContext.New(
