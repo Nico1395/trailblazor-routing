@@ -1,0 +1,42 @@
+name: "Deploy NuGet Package"
+
+on:
+  workflow_dispatch:
+  release:
+    types:
+      - published
+
+env:
+  PROJECT_SOLUTION: "src/Trailblazor.Routing.sln"
+  PACK_OUTPUT_DIRECTORY: "${{ github.workspace }}/output"
+  NUGET_SOURCE_URL: "https://api.nuget.org/v3/index.json"
+
+jobs:
+  publish:
+    name: "Build Trailblazor.Routing"
+    runs-on: "ubuntu-latest"
+    steps:
+    - name: "Checkout"
+      uses: "actions/checkout@v4"
+      with:
+        fetch-depth: 0
+
+    - name: "Setup .NET"
+      uses: "actions/setup-dotnet@v4"
+      with:
+        dotnet-version: 8.0.x
+
+    - name: "Restore dependencies"
+      run: "dotnet restore ${{ env.PROJECT_SOLUTION }}"
+
+    - name: "Build project"
+      run: "dotnet build ${{ env.PROJECT_SOLUTION }} --no-restore --configuration Release"
+
+    # - name: "Run tests"
+    #   run: "dotnet test --no-build --verbosity normal"
+
+    - name: "Pack project"
+      run: "dotnet pack ${{ env.PROJECT_SOLUTION }} --no-restore --no-build --configuration Release --include-symbols --output ${{ env.PACK_OUTPUT_DIRECTORY }}"
+
+    - name: "Push package"
+      run: "dotnet nuget push '${{ env.PACK_OUTPUT_DIRECTORY }}/*.nupkg' -k ${{ secrets.NUGET_KEY }} -s ${{ env.NUGET_SOURCE_URL }}"
