@@ -60,7 +60,7 @@ internal sealed class RouteParser : IRouteParser
     /// </summary>
     /// <param name="uri">URI whose query parameters are to be parsed.</param>
     /// <returns>Query parameters of the URI.</returns>
-    public Dictionary<string, object?> ParseQueryParameters(string uri)
+    public Dictionary<string, object?> ExtractQueryParameters(string uri)
     {
         var queryParametersString = uri.Substring(uri.IndexOf("?") + 1);
         var queryParameterPairs = queryParametersString.Split('&', StringSplitOptions.RemoveEmptyEntries);

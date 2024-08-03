@@ -39,7 +39,7 @@ public interface IRouteParser
     /// </summary>
     /// <param name="uri">URI whose query parameters are to be parsed.</param>
     /// <returns>Query parameters of the URI.</returns>
-    public Dictionary<string, object?> ParseQueryParameters(string uri);
+    public Dictionary<string, object?> ExtractQueryParameters(string uri);
 
     /// <summary>
     /// Method determines whether two specified collections of URI segments match each other.
