@@ -16,6 +16,7 @@ public interface IRouteParser
     /// Method combines <paramref name="uriSegments"/> and <paramref name="queryParameters"/> to a URI string.
     /// </summary>
     /// <param name="uriSegments">Segments to be combined.</param>
+    /// <param name="queryParameters">Query parameters to of the URI.</param>
     /// <returns>URI string.</returns>
     public string CombineSegments(string[] uriSegments, Dictionary<string, string> queryParameters);
 
