@@ -6,12 +6,18 @@
 
 Welcome to your new app.
 
-@code {
+@code
+{
     [CascadingParameter]
     public required RouterContext RouterContext { get; set; }
+
+    [Inject]
+    private IRouterContextAccessor RouterContextAccessor { get; set; } = null!;
 
     protected override void OnInitialized()
     {
         base.OnInitialized();
+
+        var routerContext = RouterContextAccessor.GetRouterContext();
     }
 }

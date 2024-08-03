@@ -13,6 +13,11 @@ public sealed record RouterContext
     /// <summary>
     /// Current relative URI with query parameters.
     /// </summary>
+    public required string? RelativeUriWithParameters { get; init; }
+
+    /// <summary>
+    /// Current relative URI with query parameters.
+    /// </summary>
     public required string? RelativeUri { get; init; }
 
     /// <summary>
@@ -30,10 +35,11 @@ public sealed record RouterContext
     /// </summary>
     public required RouteData? RouteData { get; init; }
 
-    internal static RouterContext New(string relativeUri, Dictionary<string, object?> queryParameters, Route? route)
+    internal static RouterContext New(string relativeUriWithParameters, string relativeUri, Dictionary<string, object?> queryParameters, Route? route)
     {
         return new RouterContext()
         {
+            RelativeUriWithParameters = relativeUriWithParameters,
             RelativeUri = relativeUri,
             QueryParameters = queryParameters,
             Route = route,
@@ -43,13 +49,13 @@ public sealed record RouterContext
 
     internal static RouterContext Empty()
     {
-        var route = Route.Empty<IComponent>();
         return new RouterContext()
         {
+            RelativeUriWithParameters = string.Empty,
             RelativeUri = string.Empty,
             QueryParameters = [],
-            Route = route,
-            RouteData = CreateRouteData(route, []),
+            Route = null,
+            RouteData = CreateRouteData(null, []),
         };
     }
 
