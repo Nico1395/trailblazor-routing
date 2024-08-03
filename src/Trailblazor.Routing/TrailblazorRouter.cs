@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Components.Routing;
 using Trailblazor.Routing.DependencyInjection;
 using Trailblazor.Routing.Extensions;
+using Trailblazor.Routing.Routes;
 
 namespace Trailblazor.Routing;
 
@@ -44,11 +45,18 @@ public class TrailblazorRouter : IComponent, IHandleAfterRender, IDisposable
     [Parameter, EditorRequired]
     public required Type LayoutType { get; set; }
 
+    /// <summary>
+    /// Method handles disposing off of the router.
+    /// </summary>
     public void Dispose()
     {
         NavigationManager.LocationChanged -= OnLocationChanged;
     }
 
+    /// <summary>
+    /// Attaches the component to a <see cref="RenderHandle" />.
+    /// </summary>
+    /// <param name="renderHandle">A <see cref="RenderHandle"/> that allows the component to be rendered.</param>
     public void Attach(RenderHandle renderHandle)
     {
         _renderHandle = renderHandle;
@@ -57,6 +65,16 @@ public class TrailblazorRouter : IComponent, IHandleAfterRender, IDisposable
         NavigationManager.LocationChanged += OnLocationChanged;
     }
 
+    /// <summary>
+    /// Sets parameters supplied by the component's parent in the render tree.
+    /// </summary>
+    /// <param name="parameters">The parameters.</param>
+    /// <returns>A <see cref="Task"/> that completes when the component has finished updating and rendering itself.</returns>
+    /// <remarks>
+    /// The <see cref="SetParametersAsync(ParameterView)"/> method should be passed the entire set of parameter values each
+    /// time <see cref="SetParametersAsync(ParameterView)"/> is called. It not required that the caller supply a parameter
+    /// value for all parameters that are logically understood by the component.
+    /// </remarks>
     public Task SetParametersAsync(ParameterView parameters)
     {
         parameters.SetParameterProperties(this);
@@ -68,6 +86,10 @@ public class TrailblazorRouter : IComponent, IHandleAfterRender, IDisposable
         return Task.CompletedTask;
     }
 
+    /// <summary>
+    /// Notifies the component that it has been rendered.
+    /// </summary>
+    /// <returns>A <see cref="Task"/> that represents the asynchronous event handling operation.</returns>
     public async Task OnAfterRenderAsync()
     {
         if (!_navigationInterceptionEnabled)

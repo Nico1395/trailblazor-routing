@@ -13,7 +13,7 @@ internal sealed class RouteProvider(
     NavigationManager _navigationManager) : IRouteProvider
 {
     /// <summary>
-    /// Routes cached after resolving using the <see cref="_internalRouteResolver"/>.
+    /// Routes cached after resolving using the <see cref="IInternalRouteResolver"/>.
     /// </summary>
     private List<Route>? _routes;
 
