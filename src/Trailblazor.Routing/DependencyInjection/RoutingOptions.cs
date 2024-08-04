@@ -1,5 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 using Trailblazor.Routing.Constants;
 using Trailblazor.Routing.Exceptions;
@@ -30,6 +30,11 @@ public sealed class RoutingOptions
     /// '@page' directive or <see cref="RouteAttribute"/>.
     /// </summary>
     private readonly InternalRoutingProfile _internalRoutingProfile = new();
+
+    /// <summary>
+    /// Parse options for parsing query parameters.
+    /// </summary>
+    public QueryParameterParseOptions QueryParameterParseOptions { get; set; } = QueryParameterParseOptions.Default();
 
     /// <summary>
     /// Method registers all components with an '@page' directive or <see cref="RouteAttribute"/> to the <see cref="RoutingOptions"/>.

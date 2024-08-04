@@ -5,7 +5,7 @@ namespace Trailblazor.Routing;
 /// <summary>
 /// Service provides parsing functionalities for routes.
 /// </summary>
-internal sealed class RouteParser : IRouteParser
+internal sealed class RouteParser(IQueryParameterParser _queryParameterParser) : IRouteParser
 {
     /// <summary>
     /// Method combines <paramref name="uriSegments"/> to a URI string.
@@ -71,7 +71,9 @@ internal sealed class RouteParser : IRouteParser
             if (queryParameterPair != string.Empty && queryParameterPair.Contains('='))
             {
                 var pair = queryParameterPair.Split('=');
-                queryParameters.Add(pair[0], pair[1]);
+                var queryParameterValue = _queryParameterParser.ParseValue(pair[1]);
+
+                queryParameters.Add(pair[0], queryParameterValue);
             }
         }
 
