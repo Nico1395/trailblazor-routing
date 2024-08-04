@@ -125,6 +125,12 @@ public sealed class RoutingOptions
         return this;
     }
 
+    /// <summary>
+    /// Method adds a route that is configured by a <paramref name="builderAction"/> to the router.
+    /// </summary>
+    /// <typeparam name="TComponent">Type of component representing the route.</typeparam>
+    /// <param name="builderAction">Builder action for configuring the route that is to be added.</param>
+    /// <returns><see cref="RoutingOptions"/> for further configurations.</returns>
     public RoutingOptions AddRoute<TComponent>(Action<RouteBuilder<TComponent>> builderAction)
         where TComponent : IComponent
     {
