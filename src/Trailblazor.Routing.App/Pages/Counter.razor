@@ -18,9 +18,6 @@
     {
         base.OnParametersSet();
 
-        // if (InitialCounter != null && int.TryParse(InitialCounter, out var initalCounter))
-        //     _counter = initalCounter;
-
         if (InitialCounter.HasValue)
             _counter = InitialCounter.Value;
     }
