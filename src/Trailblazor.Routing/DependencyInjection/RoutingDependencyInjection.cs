@@ -27,10 +27,9 @@ public static class RoutingDependencyInjection
 
         var options = RoutingOptions.New();
         optionsAction?.Invoke(options);
-        services.AddSingleton(options);
+        services.AddScoped<IRoutingOptionsProvider>(serviceProvider => new RoutingOptionsProvider(options));
 
         var routingProfiles = options.GetProfileTypesInternal();
-
         services.AddSingleton(_routingProfileInterfaceType, options.GetInternalRoutingProfile());
         foreach (var profileType in routingProfiles)
             services.AddSingleton(_routingProfileInterfaceType, profileType);
