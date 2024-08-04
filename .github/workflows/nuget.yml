@@ -32,7 +32,7 @@ jobs:
       run: "dotnet build ${{ env.PROJECT_SOLUTION }} --no-restore --configuration Release"
       
     - name: "Run tests"
-      run: "dotnet test ${{ env.PROJECT_SOLUTION }} --no-restore --no-build"
+      run: "dotnet test ${{ env.PROJECT_SOLUTION }} --no-restore --no-build --configuration Release"
 
     - name: "Pack project"
       run: "dotnet pack ${{ env.PROJECT_SOLUTION }} --no-restore --no-build --configuration Release --include-symbols -p:PackageVersion=${{ github.ref_name }} --output ${{ env.PACK_OUTPUT_DIRECTORY }}"
