@@ -118,7 +118,7 @@ public class RouteParserTests
 
         var targetQueryParameters = new Dictionary<string, object?>()
         {
-            { "coolParameter", "44" },
+            { "coolParameter", 44 },
             { "test", "hello-world" },
         };
 
