@@ -12,14 +12,17 @@
 
     [Parameter]
     [SupplyParameterFromQuery(Name = "initialCounter")]
-    public string? InitialCounter { get; set; }
+    public int? InitialCounter { get; set; }
 
     protected override void OnParametersSet()
     {
         base.OnParametersSet();
 
-        if (InitialCounter != null && int.TryParse(InitialCounter, out var initalCounter))
-            _counter = initalCounter;
+        // if (InitialCounter != null && int.TryParse(InitialCounter, out var initalCounter))
+        //     _counter = initalCounter;
+
+        if (InitialCounter.HasValue)
+            _counter = InitialCounter.Value;
     }
 
     private void IncrementCount()
