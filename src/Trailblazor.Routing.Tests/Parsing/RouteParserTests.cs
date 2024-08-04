@@ -1,11 +1,11 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Trailblazor.Routing;
 
-namespace Trailblazor.Tests.Parsing;
+namespace Trailblazor.Routing.Tests.Parsing;
 
 public class RouteParserTests
 {
-    private IRouteParser RouteParser => DependencyInjection.ServiceProvider.GetRequiredService<IRouteParser>();
+    private IRouteParser RouteParser => ParsingDependencyInjection.ServiceProvider.GetRequiredService<IRouteParser>();
 
     [Fact]
     public void RouteParser_RoutesMatch_Succeeds()
