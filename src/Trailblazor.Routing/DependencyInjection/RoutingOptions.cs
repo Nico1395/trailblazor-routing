@@ -94,10 +94,10 @@ public sealed class RoutingOptions
     public RoutingOptions AddProfile(Type profileType)
     {
         if (!profileType.IsAssignableTo(_routingProfileInterfaceType))
-            throw new TypeIsNotAProfileException(profileType);
+            throw new TypeIsNotARoutingProfileException(profileType);
 
         if (profileType.IsAbstract || profileType.IsInterface)
-            throw new AbstractProfileRegisteredException(profileType);
+            throw new AbstractRoutingProfileException(profileType);
 
         _routingProfileTypes.Add(profileType);
         return this;
@@ -122,6 +122,16 @@ public sealed class RoutingOptions
     public RoutingOptions AddRoute(Route route)
     {
         _internalRoutingProfile.AddRoute(route);
+        return this;
+    }
+
+    public RoutingOptions AddRoute<TComponent>(Action<RouteBuilder<TComponent>> builderAction)
+        where TComponent : IComponent
+    {
+        var builder = new RouteBuilder<TComponent>();
+        builderAction.Invoke(builder);
+
+        _internalRoutingProfile.AddRoute(builder.Build());
         return this;
     }
 

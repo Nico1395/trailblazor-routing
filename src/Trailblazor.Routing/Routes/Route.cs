@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Trailblazor.Routing.Exceptions;
 using Trailblazor.Routing.Extensions;
 
 namespace Trailblazor.Routing.Routes;
@@ -41,10 +42,11 @@ public record Route
     internal static Route Empty<TComponent>()
         where TComponent : IComponent
     {
-        return new Route()
-        {
-            Component = typeof(TComponent)
-        };
+        var componentType = typeof(TComponent);
+        if (componentType.IsAbstract || componentType.IsInterface)
+            throw new AbstractComponentException(componentType);
+
+        return new Route() { Component = componentType, };
     }
 
     /// <summary>
@@ -90,6 +92,11 @@ public record Route
             return metadataValue;
 
         return defaultValue ?? default;
+    }
+
+    public object? GetMetadataValue(string key, object? defaultValue = default)
+    {
+        return _metadata.TryGetValue(key, out var value) ? value : (defaultValue ?? default);
     }
 
     /// <summary>
