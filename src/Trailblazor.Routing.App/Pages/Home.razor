@@ -6,6 +6,14 @@
 
 Welcome to your new app.
 
+<a href="counter?differentParameterName=10">
+    Counter with parameter
+</a>
+
+<button @onclick="@(() => NavigationManager.NavigateTo("counter?differentParameterName=10"))">
+    Counter with parameter using the nav-manager
+</button>
+
 @code
 {
     [CascadingParameter]
@@ -13,6 +21,9 @@ Welcome to your new app.
 
     [Inject]
     private IRouterContextAccessor RouterContextAccessor { get; set; } = null!;
+
+    [Inject]
+    private NavigationManager NavigationManager { get; set; } = null!;
 
     protected override void OnInitialized()
     {

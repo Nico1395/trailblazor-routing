@@ -23,7 +23,16 @@ public sealed record RouterContext
     /// <summary>
     /// Query parameters of the current relative URI.
     /// </summary>
-    public required Dictionary<string, object?> QueryParameters { get; init; }
+    public required Dictionary<string, object?> UriQueryParameters { get; init; }
+
+    /// <summary>
+    /// Query parameters originating from the query parameters from the current relative URI, that were able to be associated with
+    /// the components parameters with a <see cref="SupplyParameterFromQueryAttribute"/> and matching query parameter name.
+    /// </summary>
+    /// <remarks>
+    /// The key represents the properties name, while the value represents the parsed query parameter value.
+    /// </remarks>
+    public required Dictionary<string, object?> ComponentQueryParameters { get; init; }
 
     /// <summary>
     /// Route associated with the current relative URI.
@@ -35,15 +44,16 @@ public sealed record RouterContext
     /// </summary>
     public required RouteData? RouteData { get; init; }
 
-    internal static RouterContext New(string relativeUriWithParameters, string relativeUri, Dictionary<string, object?> queryParameters, Route? route)
+    internal static RouterContext New(string relativeUriWithParameters, string relativeUri, Dictionary<string, object?> uriQueryParameters, Dictionary<string, object?> componentQueryParameters, Route? route)
     {
         return new RouterContext()
         {
             RelativeUriWithParameters = relativeUriWithParameters,
             RelativeUri = relativeUri,
-            QueryParameters = queryParameters,
+            UriQueryParameters = uriQueryParameters,
+            ComponentQueryParameters = componentQueryParameters,
             Route = route,
-            RouteData = CreateRouteData(route!, queryParameters),
+            RouteData = CreateRouteData(route!, componentQueryParameters),
         };
     }
 
@@ -53,7 +63,8 @@ public sealed record RouterContext
         {
             RelativeUriWithParameters = string.Empty,
             RelativeUri = string.Empty,
-            QueryParameters = [],
+            UriQueryParameters = [],
+            ComponentQueryParameters = [],
             Route = null,
             RouteData = CreateRouteData(null, []),
         };
