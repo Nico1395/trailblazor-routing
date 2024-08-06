@@ -32,7 +32,7 @@ public abstract record NavigationDescriptorBase
     /// <param name="queryParameterName">Name of the query parameter.</param>
     /// <param name="queryParameterValue">Value of the query parameter.</param>
     /// <returns>Navigation descriptor for further configurations.</returns>
-    public NavigationDescriptorBase WithParameter(string queryParameterName, [DisallowNull] object queryParameterValue)
+    public NavigationDescriptorBase AddParameter(string queryParameterName, [DisallowNull] object queryParameterValue)
     {
         ArgumentNullException.ThrowIfNull(queryParameterValue, nameof(queryParameterValue));
 

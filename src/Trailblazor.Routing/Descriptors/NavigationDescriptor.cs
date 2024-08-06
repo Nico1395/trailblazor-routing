@@ -31,7 +31,7 @@ public sealed record NavigationDescriptor<TComponent> : NavigationDescriptorBase
     /// <param name="paramterExpression">Expression expressing what parameter is to be addressed.</param>
     /// <param name="parameterValue">Value of the query parameter.</param>
     /// <returns>Navigation descriptor for further configurations.</returns>
-    public NavigationDescriptorBase WithParameter<TParameter>(Expression<Func<TComponent, TParameter>> paramterExpression, [DisallowNull] TParameter parameterValue)
+    public NavigationDescriptorBase AddParameter<TParameter>(Expression<Func<TComponent, TParameter>> paramterExpression, [DisallowNull] TParameter parameterValue)
     {
         ArgumentNullException.ThrowIfNull(parameterValue, nameof(parameterValue));
         MemberInfo? memberInfo = null;
