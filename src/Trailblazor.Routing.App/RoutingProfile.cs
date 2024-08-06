@@ -1,4 +1,4 @@
-﻿using Trailblazor.Routing.App.Pages;
+﻿using Trailblazor.Routing.App.Samples;
 using Trailblazor.Routing.Profiles;
 
 namespace Trailblazor.Routing.App;
