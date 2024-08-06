@@ -6,7 +6,7 @@ By default routes are scanned for and registered through `@page` directives at t
 ## Blazor Support
 Generally all forms of Blazor are supported. WebAssembly and MAUI Hybrid work without any hick-ups.
 
-_**As of right now**_ Blazor Server apps, and thus Blazor Web Apps using a Server and WASM hybrid constellation, are required to create a dummy component that have an `@page` directive placed in the server side project. For the moment I dont really know why this is required but otherwise the browser doesnt find the website if no landing page is present.
+_**As of right now**_ Blazor Server apps, and thus Blazor Web Apps using a Server and WASM hybrid constellation, are required to create a dummy component that have an `@page "/"` directive placed in the server side project. For the moment I dont really know why this is required but otherwise the browser doesnt find the website if no landing page is present.
 
 However dont sweat, that component is not used as long as you have another component configured to use the landing page URI (so `"/"`).
 
