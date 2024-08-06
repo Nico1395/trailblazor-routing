@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Trailblazor.Routing;
 
 namespace Trailblazor.Routing.Tests.Parsing;
 
@@ -118,7 +117,7 @@ public class RouteParserTests
 
         var targetQueryParameters = new Dictionary<string, object?>()
         {
-            { "coolParameter", 44 },
+            { "coolParameter", 44.ToString() },
             { "test", "hello-world" },
         };
 
