@@ -9,7 +9,7 @@ namespace Trailblazor.Routing;
 /// <summary>
 /// Service parses query parameter values from strings into their respective type.
 /// </summary>
-internal sealed class QueryParameterParser(IRoutingOptionsProvider _routingOptionsProvider) : IQueryParameterParser
+internal sealed class QueryParameterParser(IRoutingOptionsAccessor _routingOptionsProvider) : IQueryParameterParser
 {
     private CultureInfo? _numericParseCultureInfo;
     private CultureInfo? _dateTimeParseCultureInfo;
