@@ -18,11 +18,6 @@ public class Program
         builder.Services.AddTrailblazorRouting(options =>
         {
             options.AddProfilesFromAssemblies(typeof(Program).Assembly);
-            options.AddProfile<RoutingProfile>();
-            options.QueryParameterParseOptions = new QueryParameterParseOptions()
-            {
-                DateTimeStyles = DateTimeStyles.AssumeUniversal,
-            };
         });
 
         await builder.Build().RunAsync();
