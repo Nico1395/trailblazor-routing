@@ -1,6 +1,4 @@
-﻿@using Trailblazor.Routing.Routes
-
-<PageTitle>Home</PageTitle>
+﻿<PageTitle>Home</PageTitle>
 
 <h1>Hello, world!</h1>
 
@@ -14,21 +12,6 @@ Welcome to your new app.
     Counter with parameter using the nav-manager
 </button>
 
-@code
-{
-    [CascadingParameter]
-    public required RouterContext RouterContext { get; set; }
-
-    [Inject]
-    private IRouterContextAccessor RouterContextAccessor { get; set; } = null!;
-
-    [Inject]
-    private NavigationManager NavigationManager { get; set; } = null!;
-
-    protected override void OnInitialized()
-    {
-        base.OnInitialized();
-
-        var routerContext = RouterContextAccessor.GetRouterContext();
-    }
-}
+<button @onclick="@NavigateToCounter">
+    To Counter via component
+</button>

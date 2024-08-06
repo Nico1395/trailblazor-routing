@@ -52,6 +52,16 @@ internal sealed class RouteProvider(
     }
 
     /// <summary>
+    /// Method finds all routes that are associated with the specified <paramref name="componentType"/>.
+    /// </summary>
+    /// <param name="componentType">Type of component whose associated routes are to be returned.</param>
+    /// <returns>Routes associated with the specified <paramref name="componentType"/>.</returns>
+    public List<Route> FindRoutes(Type componentType)
+    {
+        return GetRoutes().SelectMany(p => p.FindRoutes(componentType)).ToList();
+    }
+
+    /// <summary>
     /// Method determines whether the specified <paramref name="route"/> is the current route.
     /// </summary>
     /// <param name="route">Route to be checked for.</param>
