@@ -26,6 +26,17 @@ internal sealed class RouteParser : IRouteParser
     public string CombineSegments(string[] uriSegments, Dictionary<string, string> queryParameters)
     {
         var uri = CombineSegments(uriSegments);
+        return AddQueryParameters(uri, queryParameters);
+    }
+
+    /// <summary>
+    /// Method adds <paramref name="queryParameters"/> to the specified <paramref name="uri"/>.
+    /// </summary>
+    /// <param name="uri">URI the <paramref name="queryParameters"/> are to be added to.</param>
+    /// <param name="queryParameters">Query paramaters to be added.</param>
+    /// <returns>URI with <paramref name="queryParameters"/> added to it.</returns>
+    public string AddQueryParameters(string uri, Dictionary<string, string> queryParameters)
+    {
         foreach (var queryParameter in queryParameters)
             uri = QueryHelpers.AddQueryString(uri, queryParameter.Key, queryParameter.Value);
 

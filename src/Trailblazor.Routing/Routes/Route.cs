@@ -71,6 +71,19 @@ public record Route
     }
 
     /// <summary>
+    /// Method finds all routes that are associated with the specified <paramref name="componentType"/>.
+    /// </summary>
+    /// <param name="componentType">Type of component whose associated routes are to be returned.</param>
+    /// <returns>Routes associated with the specified <paramref name="componentType"/>.</returns>
+    public List<Route> FindRoutes(Type componentType)
+    {
+        var foundRoutes = new List<Route>();
+        AccumulateRoutesForType(componentType, foundRoutes);
+
+        return foundRoutes;
+    }
+
+    /// <summary>
     /// Method gets all of the routes metadata.
     /// </summary>
     /// <returns>Metadata of the route.</returns>
@@ -141,5 +154,20 @@ public record Route
     internal void MergeMetadata(Dictionary<string, object?> other)
     {
         _metadata = _metadata.Merge(other);
+    }
+
+    /// <summary>
+    /// Method accumulates routes associated with the specified <paramref name="componentType"/> in the
+    /// specified <paramref name="foundRoutes"/> list.
+    /// </summary>
+    /// <param name="componentType">Type of component whose associated routes are to be returned.</param>
+    /// <param name="foundRoutes">List of routes associated with the <paramref name="componentType"/>.</param>
+    private void AccumulateRoutesForType(Type componentType, List<Route> foundRoutes)
+    {
+        if (Component == componentType)
+            foundRoutes.Add(this);
+
+        foreach (var subPage in Children)
+            subPage.AccumulateRoutesForType(componentType, foundRoutes);
     }
 }
