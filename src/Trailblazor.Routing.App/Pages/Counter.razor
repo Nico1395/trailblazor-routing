@@ -11,7 +11,7 @@
     private int _counter = 0;
 
     [Parameter]
-    [SupplyParameterFromQuery(Name = "initialCounter")]
+    [QueryParameter("differentParameterName")]
     public int? InitialCounter { get; set; }
 
     protected override void OnParametersSet()

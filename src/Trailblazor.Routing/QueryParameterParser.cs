@@ -1,5 +1,8 @@
-﻿using System.Globalization;
+﻿using Microsoft.AspNetCore.Components;
+using System.Globalization;
+using System.Reflection;
 using Trailblazor.Routing.DependencyInjection;
+using Trailblazor.Routing.Extensions;
 
 namespace Trailblazor.Routing;
 
@@ -15,54 +18,80 @@ internal sealed class QueryParameterParser(IRoutingOptionsProvider _routingOptio
     private CultureInfo DateTimeParseCultureInfo => _dateTimeParseCultureInfo ??= _routingOptionsProvider.GetRoutingOptions().QueryParameterParseOptions.DateTimeParseCultureInfo();
 
     /// <summary>
-    /// Method attempts to parse the specified <paramref name="stringValue"/>. If the string could not be parsed into
-    /// any primitive type or standard struct such as <see cref="Guid"/> or <see cref="DateTime"/>, then the specified
-    /// <paramref name="stringValue"/> will be returned.
+    /// Method parses <paramref name="rawQueryParameters"/> for the query parameter properties for components of type <paramref name="componentType"/>.
     /// </summary>
-    /// <param name="stringValue">Query parameter value as a string to be parsed.</param>
-    /// <returns>Parsed <paramref name="stringValue"/>.</returns>
-    public object ParseValue(string stringValue)
+    /// <param name="rawQueryParameters">Raw unparsed query parameters from the URI.</param>
+    /// <param name="componentType">Type of component the <paramref name="rawQueryParameters"/> are to be parsed for.</param>
+    /// <returns>Parsed component parameters.</returns>
+    public Dictionary<string, object?> ParseToComponentParameters(Dictionary<string, string> rawQueryParameters, Type componentType)
     {
-        if (_routingOptionsProvider.GetRoutingOptions().QueryParameterParseOptions.DontParseToPrimitiveTypes)
-            return stringValue;
+        var componentQueryParameterProperties = componentType
+            .GetProperties()
+            .Where(p =>
+                p.GetCustomAttribute<QueryParameterAttribute>() != null &&
+                p.GetCustomAttribute<ParameterAttribute>() != null)
+            .ToArray();
 
-        return AttemptToParseToPrimitiveTypes(stringValue);
+        return rawQueryParameters.Select(rawQueryParameter =>
+        {
+            var queryParameterProperty = FindQueryParameterProperty(componentQueryParameterProperties, rawQueryParameter);
+            if (queryParameterProperty == null)
+                return new KeyValuePair<string, object?>(string.Empty, default);
+
+            var propertyValue = ParseValueForProperty(rawQueryParameter.Value, queryParameterProperty.PropertyType);
+            return new KeyValuePair<string, object?>(queryParameterProperty.Name, propertyValue);
+        })
+        .Where(p => p.Key != string.Empty)
+        .ToDictionary();
     }
 
     /// <summary>
-    /// Method attempts to parse the <paramref name="stringValue"/> into primitive types or standard structs.
+    /// Method finds the <see cref="PropertyInfo"/> of the query parameter property.
     /// </summary>
-    /// <param name="stringValue">Value string to be parsed.</param>
-    /// <returns>Parsed <paramref name="stringValue"/>.</returns>
-    private object AttemptToParseToPrimitiveTypes(string stringValue)
+    /// <param name="componentQueryParameterProperties">Components query parameter properties.</param>
+    /// <param name="uriQueryParameter">Query parameters from the URI as a key-value-pair.</param>
+    /// <returns><see cref="PropertyInfo"/> of the query parameter proeprty for the <paramref name="uriQueryParameter"/>, if found.</returns>
+    private PropertyInfo? FindQueryParameterProperty(PropertyInfo[] componentQueryParameterProperties, KeyValuePair<string, string> uriQueryParameter)
     {
-        if (bool.TryParse(stringValue, out var boolValue))
+        return componentQueryParameterProperties.SingleOrDefault(p =>
+        {
+            var queryParameterAttribute = p.GetCustomAttribute<QueryParameterAttribute>();
+            if (queryParameterAttribute!.Name != null)
+                return queryParameterAttribute.Name.Equals(uriQueryParameter.Key, StringComparison.CurrentCultureIgnoreCase);
+
+            return p.Name.Equals(uriQueryParameter.Key, StringComparison.CurrentCultureIgnoreCase);
+        });
+    }
+
+    /// <summary>
+    /// Method parses the specified <paramref name="queryParameterValue"/> to a value of the <paramref name="componentParameterPropertyType"/>.
+    /// </summary>
+    /// <param name="queryParameterValue">Query parameter value.</param>
+    /// <param name="componentParameterPropertyType">Type of the property the <paramref name="queryParameterValue"/> is to be parsed into.</param>
+    /// <returns>Parsed component parameter property type.</returns>
+    private object? ParseValueForProperty(string queryParameterValue, Type componentParameterPropertyType)
+    {
+        if (componentParameterPropertyType.IsString())
+            return queryParameterValue;
+        else if (componentParameterPropertyType.IsBool() && bool.TryParse(queryParameterValue, out var boolValue))
             return boolValue;
-
-        if (int.TryParse(stringValue, NumericParseCultureInfo, out var intValue))
+        else if (componentParameterPropertyType.IsGuid() && Guid.TryParse(queryParameterValue, out var guidValue))
+            return guidValue;
+        else if (componentParameterPropertyType.IsTimeOnly() && TimeOnly.TryParse(queryParameterValue, DateTimeParseCultureInfo, out var timeOnlyValue))
+            return timeOnlyValue;
+        else if (componentParameterPropertyType.IsDateOnly() && DateOnly.TryParse(queryParameterValue, DateTimeParseCultureInfo, out var dateOnlyValue))
+            return dateOnlyValue;
+        else if (componentParameterPropertyType.IsDateTime() && DateTime.TryParse(queryParameterValue, DateTimeParseCultureInfo, out var dateTimeValue))
+            return dateTimeValue;
+        else if (componentParameterPropertyType.IsInt() && int.TryParse(queryParameterValue, NumericParseCultureInfo, out var intValue))
             return intValue;
-
-        if (long.TryParse(stringValue, NumericParseCultureInfo, out var longValue))
-            return longValue;
-
-        if (double.TryParse(stringValue, NumericParseCultureInfo, out var doubleValue))
+        else if (componentParameterPropertyType.IsDouble() && double.TryParse(queryParameterValue, NumericParseCultureInfo, out var doubleValue))
             return doubleValue;
-
-        if (decimal.TryParse(stringValue, NumericParseCultureInfo, out var decimalValue))
+        else if (componentParameterPropertyType.IsLong() && long.TryParse(queryParameterValue, NumericParseCultureInfo, out var longValue))
+            return longValue;
+        else if (componentParameterPropertyType.IsDecimal() && decimal.TryParse(queryParameterValue, NumericParseCultureInfo, out var decimalValue))
             return decimalValue;
 
-        if (Guid.TryParse(stringValue, out var guidValue))
-            return guidValue;
-
-        if (DateTime.TryParse(stringValue, DateTimeParseCultureInfo, _routingOptionsProvider.GetRoutingOptions().QueryParameterParseOptions.DateTimeStyles, out var dateTimeValue))
-            return dateTimeValue;
-
-        if (TimeOnly.TryParse(stringValue, DateTimeParseCultureInfo, _routingOptionsProvider.GetRoutingOptions().QueryParameterParseOptions.DateTimeStyles, out var timeOnlyValue))
-            return timeOnlyValue;
-
-        if (DateOnly.TryParse(stringValue, DateTimeParseCultureInfo, _routingOptionsProvider.GetRoutingOptions().QueryParameterParseOptions.DateTimeStyles, out var dateOnlyValue))
-            return dateOnlyValue;
-
-        return stringValue;
+        return null;
     }
 }
