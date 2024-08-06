@@ -12,6 +12,6 @@ public partial class Home : ComponentBase
 
     private void NavigateToCounter()
     {
-        Navigator.NavigateTo<Counter>(d => d.WithParameter(c => c.InitialCounter, 50));
+        Navigator.NavigateTo<Counter>(d => d.AddParameter(c => c.InitialCounter, 50));
     }
 }

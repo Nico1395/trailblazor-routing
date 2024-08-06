@@ -81,7 +81,7 @@ internal sealed class Navigator(
             var componentType = typeof(TComponent);
             var targetRoutes = _routeProvider.FindRoutes(componentType);
 
-            if (targetRoutes.Count == 2)
+            if (targetRoutes.Count != 1)
                 throw new MultipleUrisFoundForComponentException(componentType, targetRoutes.Count);
 
             navigationDescriptor.Uri = targetRoutes[0].Uri;
