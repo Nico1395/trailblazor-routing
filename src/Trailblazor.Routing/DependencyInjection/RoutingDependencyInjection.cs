@@ -18,12 +18,13 @@ public static class RoutingDependencyInjection
     /// <returns><see cref="IServiceCollection"/> for further configurations.</returns>
     public static IServiceCollection AddTrailblazorRouting(this IServiceCollection services, Action<RoutingOptions>? optionsAction = null)
     {
-        services.AddScoped<IRouteProvider, RouteProvider>();
-        services.AddScoped<IRouteParser, RouteParser>();
         services.AddScoped<IInternalRouteResolver, InternalRouteResolver>();
         services.AddScoped<IInternalRouterContextManager, InternalRouterContextManager>();
-        services.AddScoped<IRouterContextAccessor, RouterContextAccessor>();
         services.AddScoped<IQueryParameterParser, QueryParameterParser>();
+
+        services.AddScoped<IRouteProvider, RouteProvider>();
+        services.AddScoped<IRouteParser, RouteParser>();
+        services.AddScoped<IRouterContextAccessor, RouterContextAccessor>();
         services.AddScoped<INavigator, Navigator>();
 
         var options = RoutingOptions.New();
