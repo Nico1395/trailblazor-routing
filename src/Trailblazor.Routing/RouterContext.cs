@@ -23,7 +23,7 @@ public sealed record RouterContext
     /// <summary>
     /// Query parameters of the current relative URI.
     /// </summary>
-    public required Dictionary<string, object?> UriQueryParameters { get; init; }
+    public required Dictionary<string, string> UriQueryParameters { get; init; }
 
     /// <summary>
     /// Query parameters originating from the query parameters from the current relative URI, that were able to be associated with
@@ -44,7 +44,7 @@ public sealed record RouterContext
     /// </summary>
     public required RouteData? RouteData { get; init; }
 
-    internal static RouterContext New(string relativeUriWithParameters, string relativeUri, Dictionary<string, object?> uriQueryParameters, Dictionary<string, object?> componentQueryParameters, Route? route)
+    internal static RouterContext New(string relativeUriWithParameters, string relativeUri, Dictionary<string, string> uriQueryParameters, Dictionary<string, object?> componentQueryParameters, Route? route)
     {
         return new RouterContext()
         {
@@ -53,7 +53,7 @@ public sealed record RouterContext
             UriQueryParameters = uriQueryParameters,
             ComponentQueryParameters = componentQueryParameters,
             Route = route,
-            RouteData = CreateRouteData(route!, componentQueryParameters),
+            RouteData = route != null ? new RouteData(route.Component, componentQueryParameters) : null,
         };
     }
 
@@ -66,15 +66,7 @@ public sealed record RouterContext
             UriQueryParameters = [],
             ComponentQueryParameters = [],
             Route = null,
-            RouteData = CreateRouteData(null, []),
+            RouteData = null,
         };
-    }
-
-    private static RouteData? CreateRouteData(Route? route, Dictionary<string, object?> queryParameters)
-    {
-        if (route == null)
-            return null;
-
-        return new RouteData(route.Component, queryParameters);
     }
 }
