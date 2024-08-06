@@ -71,7 +71,7 @@ The most derived profiles are being registered while the inherited from profiles
 You'll know what to do if there are any problems regarding this.
 
 ## Component Query Parameters
-Since components can be registered without routes in the components, their parameters cannot be integrated into their routes 'in-component' anymore.
+Since components can be registered without routes, their query parameters cannot be integrated into their routes 'in-component' anymore (so in the URI of the `@page` directive).
 
 However the `QueryParameterAttribute` and standard ASP.NET `SupplyParameterFromQueryAttribute` can be used to accept query parameters from the current URI of the application.
 
