@@ -6,7 +6,8 @@ on:
       - published
 
 env:
-  PROJECT_SOLUTION: "src/Trailblazor.Routing.sln"
+  PROJECT: "src/Trailblazor.Routing/Trailblazor.Routing.csproj"
+  PROJECT_TESTS: "src/Trailblazor.Routing.Tests/Trailblazor.Routing.Tests.csproj"
   PACK_OUTPUT_DIRECTORY: "${{ github.workspace }}/output"
   NUGET_SOURCE_URL: "https://api.nuget.org/v3/index.json"
 
@@ -29,13 +30,13 @@ jobs:
       run: "dotnet restore ${{ env.PROJECT_SOLUTION }}"
 
     - name: "Build project"
-      run: "dotnet build ${{ env.PROJECT_SOLUTION }} --no-restore --configuration Release"
+      run: "dotnet build ${{ env.PROJECT }} --no-restore --configuration Release"
       
     - name: "Run tests"
-      run: "dotnet test ${{ env.PROJECT_SOLUTION }} --no-restore --no-build --configuration Release"
+      run: "dotnet test ${{ env.PROJECT_TESTS }} --configuration Release"
 
     - name: "Pack project"
-      run: "dotnet pack ${{ env.PROJECT_SOLUTION }} --no-restore --no-build --configuration Release --include-symbols -p:PackageVersion=${{ github.ref_name }} --output ${{ env.PACK_OUTPUT_DIRECTORY }}"
+      run: "dotnet pack ${{ env.PROJECT }} --no-restore --no-build --configuration Release --include-symbols -p:PackageVersion=${{ github.ref_name }} --output ${{ env.PACK_OUTPUT_DIRECTORY }}"
 
     - name: "Push package"
       run: "dotnet nuget push '${{ env.PACK_OUTPUT_DIRECTORY }}/*.nupkg' -k ${{ secrets.NUGET_KEY }} -s ${{ env.NUGET_SOURCE_URL }}"
