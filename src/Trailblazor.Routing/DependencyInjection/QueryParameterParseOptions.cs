@@ -8,15 +8,6 @@ namespace Trailblazor.Routing.DependencyInjection;
 public class QueryParameterParseOptions
 {
     /// <summary>
-    /// Query parameter values are being parsed as a string by default. This setting determines whether to attempt to parse the values into
-    /// primitive types or not.
-    /// </summary>
-    /// <remarks>
-    /// This setting is set to <see langword="false"/> by default, string values are being parsed into primitive types.
-    /// </remarks>
-    public bool DontParseToPrimitiveTypes { get; set; }
-
-    /// <summary>
     /// Function for configuring the <see cref="CultureInfo"/> that is to be used as a <see cref="IFormatProvider"/> when parsing numeric values.
     /// </summary>
     /// <remarks>
@@ -49,7 +40,6 @@ public class QueryParameterParseOptions
     {
         return new QueryParameterParseOptions()
         {
-            DontParseToPrimitiveTypes = false,
             DateTimeStyles = DateTimeStyles.None,
         };
     }
