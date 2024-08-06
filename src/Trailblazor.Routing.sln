@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.10.35027.167
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trailblazor.Routing.App", "Trailblazor.Routing.App\Trailblazor.Routing.App.csproj", "{D320DD8E-2039-4512-9ED4-CBC5970FD0E8}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trailblazor.Routing", "Trailblazor.Routing\Trailblazor.Routing.csproj", "{B7DDC13B-CB31-44EF-AD34-F3130BCB0B1A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trailblazor.Routing.Tests", "Trailblazor.Routing.Tests\Trailblazor.Routing.Tests.csproj", "{04DD166E-90F3-4713-807C-8204ACF68B35}"
@@ -13,16 +11,24 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Apps", "Apps", "{80646991-1
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{BD4F45DC-076C-4219-848C-8965744407E6}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trailblazor.Routing.App.Maui", "Trailblazor.Routing.App.Maui\Trailblazor.Routing.App.Maui.csproj", "{EBE87744-D2B0-46FB-8A38-DC9568848EB2}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trailblazor.Routing.App", "Trailblazor.Routing.App\Trailblazor.Routing.App.csproj", "{4E15BCFD-1A4F-4A23-933F-C684CC78CD04}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trailblazor.Routing.App.WebAssemly", "Trailblazor.Routing.App.WebAssemly\Trailblazor.Routing.App.WebAssemly.csproj", "{FB7F93B0-94A0-475C-A543-F857B83A3B15}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trailblazor.Routing.App.Server", "Trailblazor.Routing.App.Server\Trailblazor.Routing.App.Server.csproj", "{2FC06E31-04D9-4DDB-9629-813301F2C558}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trailblazor.Routing.App.Hybrid", "Trailblazor.Routing.App.Hybrid\Trailblazor.Routing.App.Hybrid\Trailblazor.Routing.App.Hybrid.csproj", "{6E72E373-3DF1-4D25-827F-A4F6883D3029}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trailblazor.Routing.App.Hybrid.Client", "Trailblazor.Routing.App.Hybrid\Trailblazor.Routing.App.Hybrid.Client\Trailblazor.Routing.App.Hybrid.Client.csproj", "{C0894E64-FA93-41C7-A30C-B917521D20A7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{D320DD8E-2039-4512-9ED4-CBC5970FD0E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D320DD8E-2039-4512-9ED4-CBC5970FD0E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D320DD8E-2039-4512-9ED4-CBC5970FD0E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D320DD8E-2039-4512-9ED4-CBC5970FD0E8}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B7DDC13B-CB31-44EF-AD34-F3130BCB0B1A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B7DDC13B-CB31-44EF-AD34-F3130BCB0B1A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B7DDC13B-CB31-44EF-AD34-F3130BCB0B1A}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -31,13 +37,44 @@ Global
 		{04DD166E-90F3-4713-807C-8204ACF68B35}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{04DD166E-90F3-4713-807C-8204ACF68B35}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{04DD166E-90F3-4713-807C-8204ACF68B35}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EBE87744-D2B0-46FB-8A38-DC9568848EB2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EBE87744-D2B0-46FB-8A38-DC9568848EB2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EBE87744-D2B0-46FB-8A38-DC9568848EB2}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{EBE87744-D2B0-46FB-8A38-DC9568848EB2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EBE87744-D2B0-46FB-8A38-DC9568848EB2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EBE87744-D2B0-46FB-8A38-DC9568848EB2}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{4E15BCFD-1A4F-4A23-933F-C684CC78CD04}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4E15BCFD-1A4F-4A23-933F-C684CC78CD04}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4E15BCFD-1A4F-4A23-933F-C684CC78CD04}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4E15BCFD-1A4F-4A23-933F-C684CC78CD04}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FB7F93B0-94A0-475C-A543-F857B83A3B15}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FB7F93B0-94A0-475C-A543-F857B83A3B15}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FB7F93B0-94A0-475C-A543-F857B83A3B15}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FB7F93B0-94A0-475C-A543-F857B83A3B15}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2FC06E31-04D9-4DDB-9629-813301F2C558}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2FC06E31-04D9-4DDB-9629-813301F2C558}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2FC06E31-04D9-4DDB-9629-813301F2C558}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2FC06E31-04D9-4DDB-9629-813301F2C558}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6E72E373-3DF1-4D25-827F-A4F6883D3029}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6E72E373-3DF1-4D25-827F-A4F6883D3029}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6E72E373-3DF1-4D25-827F-A4F6883D3029}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6E72E373-3DF1-4D25-827F-A4F6883D3029}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C0894E64-FA93-41C7-A30C-B917521D20A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C0894E64-FA93-41C7-A30C-B917521D20A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C0894E64-FA93-41C7-A30C-B917521D20A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C0894E64-FA93-41C7-A30C-B917521D20A7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{D320DD8E-2039-4512-9ED4-CBC5970FD0E8} = {80646991-13A2-4E34-97DC-DD3C806794DB}
 		{04DD166E-90F3-4713-807C-8204ACF68B35} = {BD4F45DC-076C-4219-848C-8965744407E6}
+		{EBE87744-D2B0-46FB-8A38-DC9568848EB2} = {80646991-13A2-4E34-97DC-DD3C806794DB}
+		{4E15BCFD-1A4F-4A23-933F-C684CC78CD04} = {80646991-13A2-4E34-97DC-DD3C806794DB}
+		{FB7F93B0-94A0-475C-A543-F857B83A3B15} = {80646991-13A2-4E34-97DC-DD3C806794DB}
+		{2FC06E31-04D9-4DDB-9629-813301F2C558} = {80646991-13A2-4E34-97DC-DD3C806794DB}
+		{6E72E373-3DF1-4D25-827F-A4F6883D3029} = {80646991-13A2-4E34-97DC-DD3C806794DB}
+		{C0894E64-FA93-41C7-A30C-B917521D20A7} = {80646991-13A2-4E34-97DC-DD3C806794DB}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BFC58125-6A21-47DC-BB06-4388390AB39B}
