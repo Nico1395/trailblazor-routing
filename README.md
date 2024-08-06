@@ -80,8 +80,8 @@ However the `QueryParameterAttribute` and standard ASP.NET `SupplyParameterFromQ
 3. Add the `ParameterAttribute` to the property. This is required since these are still components and the query parameters are dealed to the components from the outside using parameters. As a result these properties need to be public and have a public getter and setter.
 
 ### Important:
-- Using the `SupplyParameterFromQueryAttribute` makes the application run into an (to my knowledge) uncatchable exception if the type of the query parameter value and the type of the component parameter property don#t match up.
-- Since the `QueryParameterAttribute` is written and evaluated by **Trailblazor Routing**, query parameters that dont match the type of the components parameter property equivalent are simply ignored. Query parameter values are always attempted to be parsed into the component properties type.
+- Using the `SupplyParameterFromQueryAttribute` makes the application run into an (to my knowledge) uncatchable exception if the type of the query parameter value and the type of the component parameter property don't match up. As far as I know, a lot of the times the type of the query parameter value will simply be a string.
+- Since the `QueryParameterAttribute` is written and evaluated by **Trailblazor Routing**, query parameters that dont match the type of the components parameter property equivalent are simply ignored. Query parameter values are always attempted to be parsed into the component properties type, meaning you can specify any kind of type that one would parse into a query parameter. This makes query parameters in components much much easier and would be my preferred choice.
 
 ```cs
 <PageTitle>Counter</PageTitle>
