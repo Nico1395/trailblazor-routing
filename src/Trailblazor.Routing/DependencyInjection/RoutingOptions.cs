@@ -56,18 +56,21 @@ public sealed class RoutingOptions
         var routes = assemblies
             .SelectMany(a => a.GetTypes())
             .Where(t => !t.IsAbstract && t.IsAssignableTo(componentBaseType) && t.GetCustomAttributes<RouteAttribute>().Any())
-            .Select(type =>
-            {
-                var route = new Route()
+            .SelectMany(type => type
+                .GetCustomAttributes<RouteAttribute>()
+                .DistinctBy(attribute => attribute.Template)
+                .Select(attribute =>
                 {
-                    Uri = type.GetCustomAttribute<RouteAttribute>()!.Template,
-                    Component = type,
-                };
+                    var route = new Route()
+                    {
+                        Uri = attribute.Template,
+                        Component = type,
+                    };
 
-                route.SetMetadataValue(MetadataConstants.FromPageDirective, true);
-                return route;
-            })
-            .ToList();
+                    route.SetMetadataValue(MetadataConstants.FromPageDirective, true);
+                    return route;
+                }))
+            .ToArray();
 
         foreach (var route in routes)
             _internalRoutingProfile.AddRoute(route);
