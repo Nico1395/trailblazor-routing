@@ -34,6 +34,15 @@ builder.Services.AddTrailblazorRouting(options =>
 });
 ```
 
+### @page Directive Support
+The support for `@page` directives is limited. But any component with that directive can be scanned for and registered as a route.
+
+#### Limitations
+- Query parameters have to be configured using the `ParameterAttribute` and either `SupplyParameterFromQueryAttribute` or `QueryParameterAttribute`.
+- Following syntax is _**not**_ supported: `@page "/some-uri/{SomeParameterProperty}`
+
+For specifics about query parameters see the appropriate section below.
+
 ### Blazor Web App Hybrid
 When using a Blazor Web App Hybrid the dependecy injection for the router needs to be done server side. 
 
