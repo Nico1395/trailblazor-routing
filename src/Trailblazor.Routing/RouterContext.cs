@@ -23,6 +23,9 @@ public sealed record RouterContext
     /// <summary>
     /// Query parameters of the current relative URI.
     /// </summary>
+    /// <remarks>
+    /// Note: If the route contains parameters setup via the '<c>@code</c>' directive, then this dictionary will be emtpy.
+    /// </remarks>
     public required Dictionary<string, string> UriQueryParameters { get; init; }
 
     /// <summary>

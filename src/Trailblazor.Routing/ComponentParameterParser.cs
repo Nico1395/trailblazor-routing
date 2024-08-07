@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Components;
 using System.Globalization;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using Trailblazor.Routing.DependencyInjection;
+using Trailblazor.Routing.Exceptions;
 using Trailblazor.Routing.Extensions;
 
 namespace Trailblazor.Routing;
@@ -9,10 +11,17 @@ namespace Trailblazor.Routing;
 /// <summary>
 /// Service parses query parameter values from strings into their respective type.
 /// </summary>
-internal sealed class QueryParameterParser(IRoutingOptionsAccessor _routingOptionsProvider) : IQueryParameterParser
+internal sealed class ComponentParameterParser(
+    IRoutingOptionsAccessor _routingOptionsProvider,
+    IUriParser _uriParser) : IComponentParameterParser
 {
     private CultureInfo? _numericParseCultureInfo;
     private CultureInfo? _dateTimeParseCultureInfo;
+
+    private readonly string[] _validDirectiveParameterTypes =
+    {
+        "bool", "datetime", "decimal", "double", "float", "guid", "int", "long", "timeonly", "dateonly", "string"
+    };
 
     private CultureInfo NumericParseCultureInfo => _numericParseCultureInfo ??= _routingOptionsProvider.GetRoutingOptions().QueryParameterParseOptions.NumericParseCultureInfo();
     private CultureInfo DateTimeParseCultureInfo => _dateTimeParseCultureInfo ??= _routingOptionsProvider.GetRoutingOptions().QueryParameterParseOptions.DateTimeParseCultureInfo();
@@ -23,7 +32,7 @@ internal sealed class QueryParameterParser(IRoutingOptionsAccessor _routingOptio
     /// <param name="rawQueryParameters">Raw unparsed query parameters from the URI.</param>
     /// <param name="componentType">Type of component the <paramref name="rawQueryParameters"/> are to be parsed for.</param>
     /// <returns>Parsed component parameters.</returns>
-    public Dictionary<string, object?> ParseToComponentParameters(Dictionary<string, string> rawQueryParameters, Type componentType)
+    public Dictionary<string, object?> ParseFromQueryParameters(Dictionary<string, string> rawQueryParameters, Type componentType)
     {
         var componentQueryParameterProperties = componentType
             .GetProperties()
@@ -43,6 +52,76 @@ internal sealed class QueryParameterParser(IRoutingOptionsAccessor _routingOptio
         })
         .Where(p => p.Key != string.Empty)
         .ToDictionary();
+    }
+
+    public Dictionary<string, object?> ParseFromDirectiveQueryParameters(string relativeUri, Type componentType, string routeUri)
+    {
+        var routeUriSegments = _uriParser.ParseSegments(routeUri);
+        var queryParameterDescriptors = routeUriSegments
+            .Select(segment =>
+            {
+                var segmentPosition = Array.FindIndex(routeUriSegments, s => s == segment);
+                var match = Regex.Match(segment, @"\{[^}]+\}");
+
+                if (match.Success)
+                {
+                    var segmentParameter = match.Value.Trim('{', '}');
+                    return (segmentPosition, segmentParameter);
+                }
+
+                return default;
+            })
+            .Where(s => s != default)
+            .ToList();
+
+        var relativeUriSegments = _uriParser.ParseSegments(relativeUri);
+        var directiveQueryParmeters = new Dictionary<string, object?>();
+
+        foreach (var queryParameterDescriptor in queryParameterDescriptors)
+        {
+            if (relativeUriSegments.Length - 1 < queryParameterDescriptor.segmentPosition)
+                continue;
+
+            var parameterValueSegment = relativeUriSegments[queryParameterDescriptor.segmentPosition];
+            var parameterDescriptorSegmentArguments = queryParameterDescriptor.segmentParameter.Split(':');
+            var parameterValue = GetDirectiveParameterValue(parameterDescriptorSegmentArguments, parameterValueSegment);
+
+            if (parameterValue != null)
+                directiveQueryParmeters.Add(parameterDescriptorSegmentArguments[0], parameterValue);
+        }
+
+        return directiveQueryParmeters;
+    }
+
+    private object? GetDirectiveParameterValue(string[] parameterDescriptorSegmentArguments, string parameterValueSegment)
+    {
+        if (parameterDescriptorSegmentArguments.Length == 1)
+        {
+            // TODO -> {*catchAllParameters}
+            return parameterValueSegment;
+        }
+        else
+        {
+            var isValidType = _validDirectiveParameterTypes.Any(t => t.Equals(parameterDescriptorSegmentArguments[1].TrimEnd('?'), StringComparison.OrdinalIgnoreCase));
+            if (!isValidType)
+                throw new InvalidDirectiveQueryParameterTypeException();
+
+            return parameterDescriptorSegmentArguments[1] switch
+            {
+                "bool" => bool.Parse(parameterValueSegment),
+                "datetime" => DateTime.Parse(parameterValueSegment, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind),
+                "decimal" => decimal.Parse(parameterValueSegment, CultureInfo.InvariantCulture),
+                "double" => double.Parse(parameterValueSegment, CultureInfo.InvariantCulture),
+                "float" => float.Parse(parameterValueSegment, CultureInfo.InvariantCulture),
+                "guid" => Guid.Parse(parameterValueSegment),
+                "int" => int.Parse(parameterValueSegment, CultureInfo.InvariantCulture),
+                "long" => long.Parse(parameterValueSegment, CultureInfo.InvariantCulture),
+                "timeonly" => TimeOnly.Parse(parameterValueSegment, CultureInfo.InvariantCulture),
+                "dateonly" => DateOnly.Parse(parameterValueSegment, CultureInfo.InvariantCulture),
+                "string" => parameterValueSegment,
+                _ => throw new InvalidDirectiveQueryParameterTypeException(),
+            };
+        }
     }
 
     /// <summary>

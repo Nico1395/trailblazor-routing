@@ -28,6 +28,8 @@ public interface IUriParser
     /// <returns>URI with <paramref name="queryParameters"/> added to it.</returns>
     public string AddQueryParameters(string uri, Dictionary<string, string> queryParameters);
 
+    public string AddDirectiveQueryParameters(string uri, Dictionary<uint, string> directiveQueryParameters);
+
     /// <summary>
     /// Method parses a <paramref name="uri"/> into its segments.
     /// </summary>

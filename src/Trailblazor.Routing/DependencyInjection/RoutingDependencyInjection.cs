@@ -20,7 +20,7 @@ public static class RoutingDependencyInjection
     {
         services.AddScoped<IInternalRouteResolver, InternalRouteResolver>();
         services.AddScoped<IInternalRouterContextManager, InternalRouterContextManager>();
-        services.AddScoped<IQueryParameterParser, QueryParameterParser>();
+        services.AddScoped<IComponentParameterParser, ComponentParameterParser>();
 
         services.AddScoped<IRouteProvider, RouteProvider>();
         services.AddScoped<IUriParser, UriParser>();

@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Trailblazor.Routing.Constants;
 using Trailblazor.Routing.Extensions;
+using Trailblazor.Routing.Routes;
 
 namespace Trailblazor.Routing;
 
@@ -8,7 +10,7 @@ namespace Trailblazor.Routing;
 /// </summary>
 internal sealed class InternalRouterContextManager(
     NavigationManager _navigationManager,
-    IQueryParameterParser _queryParameterParser,
+    IComponentParameterParser _componentParameterParser,
     IUriParser _uriParser,
     IRouteProvider _routeProvider) : IInternalRouterContextManager
 {
@@ -33,7 +35,7 @@ internal sealed class InternalRouterContextManager(
         var relativeUri = _uriParser.RemoveQueryParameters(relativeUriWithParameters);
         var route = _routeProvider.FindRoute(relativeUri);
         var uriQueryParameters = _uriParser.ExtractQueryParameters(relativeUriWithParameters);
-        var componentQueryParameters = route != null ? _queryParameterParser.ParseToComponentParameters(uriQueryParameters, route.Component) : [];
+        var componentQueryParameters = GetComponentQueryParameters(route, uriQueryParameters, relativeUriWithParameters);
 
         return _internalRouterContext = RouterContext.New(
             relativeUriWithParameters,
@@ -41,5 +43,20 @@ internal sealed class InternalRouterContextManager(
             uriQueryParameters,
             componentQueryParameters,
             route);
+    }
+
+    private Dictionary<string, object?> GetComponentQueryParameters(Route? route, Dictionary<string, string> uriQueryParameters, string relativeUriWithParameters)
+    {
+        if (route == null)
+            return [];
+
+        if (route.GetMetadataValue(MetadataConstants.FromPageDirective, false))
+        {
+            return _componentParameterParser.ParseFromDirectiveQueryParameters(relativeUriWithParameters, route.Component, route.Uri);
+        }
+        else
+        {
+            return _componentParameterParser.ParseFromQueryParameters(uriQueryParameters, route.Component);
+        }
     }
 }

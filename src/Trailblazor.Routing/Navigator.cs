@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using System.Diagnostics.CodeAnalysis;
+using Trailblazor.Routing.Constants;
 using Trailblazor.Routing.Descriptors;
 using Trailblazor.Routing.Exceptions;
 
@@ -84,7 +85,10 @@ internal sealed class Navigator(
             if (targetRoutes.Count != 1)
                 throw new MultipleUrisFoundForComponentException(componentType, targetRoutes.Count);
 
-            navigationDescriptor.Uri = targetRoutes[0].Uri;
+            var targetRoute = targetRoutes[0];
+
+            navigationDescriptor.Uri = targetRoute.Uri;
+            navigationDescriptor.RouteRegisteredUsingPageDirective = targetRoute.GetMetadataValue(MetadataConstants.FromPageDirective, false);
         }
 
         NavigateToInternal(navigationDescriptor);
@@ -99,7 +103,9 @@ internal sealed class Navigator(
         if (navigationDescriptor.Uri == null)
             throw new NoUriSpecifiedException();
 
-        var uriWithQueryParameters = _uriParser.AddQueryParameters(navigationDescriptor.Uri, navigationDescriptor.QueryParameters);
+        var uriWithQueryParameters = navigationDescriptor.RouteRegisteredUsingPageDirective
+            ? _uriParser.AddDirectiveQueryParameters(navigationDescriptor.Uri, navigationDescriptor.QueryParameters.Select(p => new KeyValuePair<uint, string>(uint.Parse(p.Key), p.Value)).ToDictionary())
+            : _uriParser.AddQueryParameters(navigationDescriptor.Uri, navigationDescriptor.QueryParameters);
 
         _navigationManager.NavigateTo(
             uriWithQueryParameters,

@@ -27,6 +27,11 @@ public abstract record NavigationDescriptorBase
     public Dictionary<string, string> QueryParameters { get; } = [];
 
     /// <summary>
+    /// Determines whether the route is registered using a '<c>@page</c>' directive.
+    /// </summary>
+    public bool RouteRegisteredUsingPageDirective { get; set; }
+
+    /// <summary>
     /// Method adds a query parameter to the descriptors <see cref="Uri"/>.
     /// </summary>
     /// <param name="queryParameterName">Name of the query parameter.</param>
@@ -37,6 +42,14 @@ public abstract record NavigationDescriptorBase
         ArgumentNullException.ThrowIfNull(queryParameterValue, nameof(queryParameterValue));
 
         QueryParameters.Add(queryParameterName, queryParameterValue.ToString()!);
+        return this;
+    }
+
+    public NavigationDescriptorBase AddDirectiveParameter(uint order, [DisallowNull] object queryParameterValue)
+    {
+        ArgumentNullException.ThrowIfNull(queryParameterValue, nameof(queryParameterValue));
+
+        QueryParameters.Add(order.ToString(), queryParameterValue.ToString()!);
         return this;
     }
 }

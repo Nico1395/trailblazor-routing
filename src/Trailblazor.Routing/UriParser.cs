@@ -43,6 +43,16 @@ internal sealed class UriParser : IUriParser
         return uri;
     }
 
+    public string AddDirectiveQueryParameters(string uri, Dictionary<uint, string> directiveQueryParameters)
+    {
+        directiveQueryParameters = directiveQueryParameters.OrderBy(kvp => kvp.Key).ToDictionary();
+
+        foreach (var queryParameter in directiveQueryParameters)
+            uri = $"{uri}/{directiveQueryParameters[queryParameter.Key]}";
+
+        return uri;
+    }
+
     /// <summary>
     /// Method parses a <paramref name="uri"/> into its segments.
     /// </summary>
