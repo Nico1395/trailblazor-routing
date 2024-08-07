@@ -63,10 +63,10 @@ internal sealed class RoutingProfile : RoutingProfileBase
 ```
 
 ### Route Relationships
-Routes can cascade, meaning have children and a parent. Of course this is completely optional and doesnt have any relevance for routing and navigation, however if one would want to write breadcrumb components or a cascading menu this will allow doing exactly that without a hassle.
+Routes can cascade, meaning have children and a parent. Of course this is completely optional and doesnt have any relevance for routing and navigation, however if one would want to write breadcrumb components or a cascading menu, this would make it much easier.
 
 ### Inheritance Of Profiles
-The most derived profiles are being registered while the inherited from profiles are ignored when scanning assemblies. Duplicates are filtered out as well. This obviously needs to be done so no duplicate routes or multiple uses of routes end up in the router.
+The most derived profiles are being registered, while the inherited profiles are ignored when scanning assemblies. Duplicates are filtered out as well. This obviously needs to be done so no duplicate routes or multiple uses of routes end up in the router.
 
 You'll know what to do if there are any problems regarding this.
 
