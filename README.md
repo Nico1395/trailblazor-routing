@@ -62,6 +62,18 @@ internal sealed class RoutingProfile : RoutingProfileBase
 }
 ```
 
+## Managing Routes
+Routes can the edited, deleted and overriden. These actions however are limited to the routes of their profile and inheriting and inherited profiles.
+
+```cs
+configuration.EditRoute<Home>("/", r => r.WithMetadataValue("title", "Home"));
+
+configuration.OverrideRoute<DummyCounter, Counter>("/counter", r => r.WithMetadataValue("custom-metadata", "wow"));
+
+configuration.AddRoute<DummyCounter>(r => r.WithUri("/dummy-counter"));
+configuration.RemoveRoute<DummyCounter>("/dummy-counter");
+```
+
 ### Route Relationships
 Routes can cascade, meaning have children and a parent. Of course this is completely optional and doesnt have any relevance for routing and navigation, however if one would want to write breadcrumb components or a cascading menu, this would make it much easier.
 
