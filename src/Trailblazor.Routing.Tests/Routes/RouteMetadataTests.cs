@@ -5,7 +5,7 @@ namespace Trailblazor.Routing.Tests.Routes;
 
 public class RouteMetadataTests
 {
-    private Route NewRoute => new() { Component = typeof(DummyComponent) };
+    private Route NewRoute => Route.Empty<DummyComponent>();
 
     [Fact]
     public void Route_SetMetadataValue()

@@ -40,7 +40,7 @@ public record Route
     /// </summary>
     /// <typeparam name="TComponent">Type of component representing the route.</typeparam>
     /// <returns>Empty route leading to the <typeparamref name="TComponent"/>.</returns>
-    internal static Route Empty<TComponent>()
+    public static Route Empty<TComponent>()
         where TComponent : IComponent
     {
         var componentType = typeof(TComponent);
