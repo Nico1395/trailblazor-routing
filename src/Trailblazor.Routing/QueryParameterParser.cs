@@ -71,6 +71,8 @@ internal sealed class QueryParameterParser(IRoutingOptionsAccessor _routingOptio
     /// <returns>Parsed component parameter property type.</returns>
     private object? ParseValueForProperty(string queryParameterValue, Type componentParameterPropertyType)
     {
+        queryParameterValue = Uri.UnescapeDataString(queryParameterValue);
+
         if (componentParameterPropertyType.IsString())
             return queryParameterValue;
         else if (componentParameterPropertyType.IsBool() && bool.TryParse(queryParameterValue, out var boolValue))
