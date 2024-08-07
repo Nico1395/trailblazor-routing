@@ -37,8 +37,17 @@ public sealed class RoutingOptions
     public QueryParameterParseOptions QueryParameterParseOptions { get; set; } = QueryParameterParseOptions.Default();
 
     /// <summary>
-    /// Method registers all components with an '@page' directive or <see cref="RouteAttribute"/> to the <see cref="RoutingOptions"/>.
+    /// Method registers all components with an '<c>@page</c>' directive or <see cref="RouteAttribute"/> to the <see cref="RoutingOptions"/>.
     /// </summary>
+    /// <remarks>
+    /// Note:<br/>
+    /// Components with an '<c>@page</c>' should only receive query parameters using the <see cref="ParameterAttribute"/> and either the
+    /// <see cref="SupplyParameterFromQueryAttribute"/> or the <see cref="QueryParameterAttribute"/>. Routes with query parameters of following
+    /// format are not supported and will malfunction:<br/>
+    /// <code>
+    /// @page "some-uri/{QueryParameterProperty}"
+    /// </code>
+    /// </remarks>
     /// <param name="assemblies">Assemblies to scan in.</param>
     /// <returns><see cref="RoutingOptions"/> for further configurations.</returns>
     public RoutingOptions ScanForComponentsInAssemblies(params Assembly[] assemblies)
