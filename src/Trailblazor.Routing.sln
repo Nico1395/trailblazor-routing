@@ -15,13 +15,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trailblazor.Routing.App.Mau
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trailblazor.Routing.App", "Trailblazor.Routing.App\Trailblazor.Routing.App.csproj", "{4E15BCFD-1A4F-4A23-933F-C684CC78CD04}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trailblazor.Routing.App.WebAssemly", "Trailblazor.Routing.App.WebAssemly\Trailblazor.Routing.App.WebAssemly.csproj", "{FB7F93B0-94A0-475C-A543-F857B83A3B15}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trailblazor.Routing.App.WebAssemly", "Trailblazor.Routing.App.WebAssemly\Trailblazor.Routing.App.WebAssemly.csproj", "{FB7F93B0-94A0-475C-A543-F857B83A3B15}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trailblazor.Routing.App.Server", "Trailblazor.Routing.App.Server\Trailblazor.Routing.App.Server.csproj", "{2FC06E31-04D9-4DDB-9629-813301F2C558}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trailblazor.Routing.App.Server", "Trailblazor.Routing.App.Server\Trailblazor.Routing.App.Server.csproj", "{2FC06E31-04D9-4DDB-9629-813301F2C558}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trailblazor.Routing.App.Hybrid", "Trailblazor.Routing.App.Hybrid\Trailblazor.Routing.App.Hybrid\Trailblazor.Routing.App.Hybrid.csproj", "{6E72E373-3DF1-4D25-827F-A4F6883D3029}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trailblazor.Routing.App.Hybrid", "Trailblazor.Routing.App.Hybrid\Trailblazor.Routing.App.Hybrid\Trailblazor.Routing.App.Hybrid.csproj", "{6E72E373-3DF1-4D25-827F-A4F6883D3029}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trailblazor.Routing.App.Hybrid.Client", "Trailblazor.Routing.App.Hybrid\Trailblazor.Routing.App.Hybrid.Client\Trailblazor.Routing.App.Hybrid.Client.csproj", "{C0894E64-FA93-41C7-A30C-B917521D20A7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trailblazor.Routing.App.Hybrid.Client", "Trailblazor.Routing.App.Hybrid\Trailblazor.Routing.App.Hybrid.Client\Trailblazor.Routing.App.Hybrid.Client.csproj", "{C0894E64-FA93-41C7-A30C-B917521D20A7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

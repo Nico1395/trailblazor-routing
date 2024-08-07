@@ -13,9 +13,14 @@ public sealed class RouteBuilder<TComponent>
 
     internal RouteBuilder() { }
 
-    internal RouteBuilder(Route parentRoute)
+    /// <summary>
+    /// Constructor acceppts a <paramref name="baseRoute"/> the to be configured route bases off of.
+    /// </summary>
+    /// <param name="baseRoute">Base route the to be configured route bases off of.</param>
+    internal RouteBuilder(Route baseRoute)
     {
-        _route.Parent = parentRoute;
+        _route = baseRoute;
+        _route.Component = typeof(TComponent);
     }
 
     /// <summary>
@@ -61,11 +66,22 @@ public sealed class RouteBuilder<TComponent>
     public RouteBuilder<TComponent> WithChild<TChildComponent>(Action<RouteBuilder<TChildComponent>> builderAction)
         where TChildComponent : IComponent
     {
-        var builder = new RouteBuilder<TChildComponent>(_route);
+        var builder = new RouteBuilder<TChildComponent>().SetParent(_route);
 
         builderAction.Invoke(builder);
         _route.Children.Add(builder.Build());
 
+        return this;
+    }
+
+    /// <summary>
+    /// Method sets the specified <paramref name="parentRoute"/> to be the configured routes parent.
+    /// </summary>
+    /// <param name="parentRoute">The to be configured routes parent.</param>
+    /// <returns>Route builder for further configurations.</returns>
+    internal RouteBuilder<TComponent> SetParent(Route parentRoute)
+    {
+        _route.Parent = parentRoute;
         return this;
     }
 
@@ -75,6 +91,9 @@ public sealed class RouteBuilder<TComponent>
     /// <returns>Configured route.</returns>
     internal Route Build()
     {
+        if (_route.Component == null)
+            throw new NullReferenceException($"The '{nameof(_route.Component)}' property cannot be null.");
+
         return _route;
     }
 }

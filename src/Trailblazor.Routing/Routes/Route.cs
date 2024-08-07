@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using System.Diagnostics.CodeAnalysis;
 using Trailblazor.Routing.Exceptions;
 using Trailblazor.Routing.Extensions;
 
@@ -32,7 +33,7 @@ public record Route
     /// <summary>
     /// Type of component representing the route.
     /// </summary>
-    public required Type Component { get; init; }
+    public Type Component { get; internal set; } = null!;
 
     /// <summary>
     /// Internally creates an empty <see cref="Route"/> from the given <typeparamref name="TComponent"/> type-parameter.
