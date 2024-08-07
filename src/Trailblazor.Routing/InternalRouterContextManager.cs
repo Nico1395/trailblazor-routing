@@ -9,7 +9,7 @@ namespace Trailblazor.Routing;
 internal sealed class InternalRouterContextManager(
     NavigationManager _navigationManager,
     IQueryParameterParser _queryParameterParser,
-    IRouteParser _routeParser,
+    IUriParser _uriParser,
     IRouteProvider _routeProvider) : IInternalRouterContextManager
 {
     private RouterContext _internalRouterContext = RouterContext.Empty();
@@ -30,9 +30,9 @@ internal sealed class InternalRouterContextManager(
     public RouterContext UpdateAndGetRouterContext()
     {
         var relativeUriWithParameters = _navigationManager.GetRelativeUri();
-        var relativeUri = _routeParser.RemoveQueryParameters(relativeUriWithParameters);
+        var relativeUri = _uriParser.RemoveQueryParameters(relativeUriWithParameters);
         var route = _routeProvider.FindRoute(relativeUri);
-        var uriQueryParameters = _routeParser.ExtractQueryParameters(relativeUriWithParameters);
+        var uriQueryParameters = _uriParser.ExtractQueryParameters(relativeUriWithParameters);
         var componentQueryParameters = route != null ? _queryParameterParser.ParseToComponentParameters(uriQueryParameters, route.Component) : [];
 
         return _internalRouterContext = RouterContext.New(

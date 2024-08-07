@@ -1,9 +1,9 @@
 ﻿namespace Trailblazor.Routing;
 
 /// <summary>
-/// Service provides parsing functionalities for routes.
+/// Service provides parsing functionalities for URIs.
 /// </summary>
-public interface IRouteParser
+public interface IUriParser
 {
     /// <summary>
     /// Method combines <paramref name="uriSegments"/> to a URI string.

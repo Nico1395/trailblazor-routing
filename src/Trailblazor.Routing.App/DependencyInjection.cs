@@ -11,6 +11,8 @@ public static class DependencyInjection
         services.AddTrailblazorRouting(options =>
         {
             assemblies = assemblies.Concat([typeof(DependencyInjection).Assembly]).ToArray();
+
+            options.ScanForComponentsInAssemblies(assemblies);
             options.AddProfilesFromAssemblies(assemblies);
         });
 

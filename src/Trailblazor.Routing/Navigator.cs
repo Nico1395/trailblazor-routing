@@ -8,7 +8,7 @@ namespace Trailblazor.Routing;
 internal sealed class Navigator(
     NavigationManager _navigationManager,
     IRouteProvider _routeProvider,
-    IRouteParser _routeParser) : INavigator
+    IUriParser _uriParser) : INavigator
 {
     /// <summary>
     /// Method navigates to the specified <paramref name="uri"/>.
@@ -99,7 +99,7 @@ internal sealed class Navigator(
         if (navigationDescriptor.Uri == null)
             throw new NoUriSpecifiedException();
 
-        var uriWithQueryParameters = _routeParser.AddQueryParameters(navigationDescriptor.Uri, navigationDescriptor.QueryParameters);
+        var uriWithQueryParameters = _uriParser.AddQueryParameters(navigationDescriptor.Uri, navigationDescriptor.QueryParameters);
 
         _navigationManager.NavigateTo(
             uriWithQueryParameters,

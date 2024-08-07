@@ -3,9 +3,9 @@
 namespace Trailblazor.Routing;
 
 /// <summary>
-/// Service provides parsing functionalities for routes.
+/// Service provides parsing functionalities for URIs.
 /// </summary>
-internal sealed class RouteParser : IRouteParser
+internal sealed class UriParser : IUriParser
 {
     /// <summary>
     /// Method combines <paramref name="uriSegments"/> to a URI string.
@@ -61,9 +61,20 @@ internal sealed class RouteParser : IRouteParser
     public string RemoveQueryParameters(string uri)
     {
         if (!uri.Contains('?'))
-            return uri;
+        {
+            var segmentsWithoutParameters = uri
+                .Split('/')
+                .Where(s =>
+                    !s.StartsWith("%3A") &&
+                    !s.EndsWith("%3A"))
+                .ToArray();
 
-        return uri.Substring(0, uri.IndexOf('?'));
+            return string.Join('/', segmentsWithoutParameters);
+        }
+        else
+        {
+            return uri.Substring(0, uri.IndexOf('?'));
+        }
     }
 
     /// <summary>

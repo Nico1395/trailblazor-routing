@@ -2,39 +2,39 @@
 
 namespace Trailblazor.Routing.Tests.Parsing;
 
-public class RouteParserTests
+public class UriParserTests
 {
-    private IRouteParser RouteParser => ParsingDependencyInjection.ServiceProvider.GetRequiredService<IRouteParser>();
+    private IUriParser UriParser => ParsingDependencyInjection.ServiceProvider.GetRequiredService<IUriParser>();
 
     [Fact]
-    public void RouteParser_RoutesMatch_Succeeds()
+    public void UriParser_RoutesMatch_Succeeds()
     {
         var leftSegments = new string[] { "these", "segments", "match" };
         var rightSegments = new string[] { "these", "segments", "match" };
 
-        Assert.True(RouteParser.RoutesMatch(leftSegments, rightSegments));
+        Assert.True(UriParser.RoutesMatch(leftSegments, rightSegments));
     }
 
     [Fact]
-    public void RouteParser_RoutesMatch_Fails()
+    public void UriParser_RoutesMatch_Fails()
     {
         var leftSegments = new string[] { "these", "segments", "match" };
         var rightSegments = new string[] { "these", "segments", "dont", "match" };
 
-        Assert.False(RouteParser.RoutesMatch(leftSegments, rightSegments));
+        Assert.False(UriParser.RoutesMatch(leftSegments, rightSegments));
     }
 
     [Fact]
-    public void RouteParser_RoutesMatch_DifferentOrder()
+    public void UriParser_RoutesMatch_DifferentOrder()
     {
         var leftSegments = new string[] { "these", "segments", "match" };
         var rightSegments = new string[] { "segments", "match", "these" };
 
-        Assert.False(RouteParser.RoutesMatch(leftSegments, rightSegments));
+        Assert.False(UriParser.RoutesMatch(leftSegments, rightSegments));
     }
 
     [Fact]
-    public void RouteParser_CombineSegments()
+    public void UriParser_CombineSegments()
     {
         var uriSegments = new[]
         {
@@ -44,12 +44,12 @@ public class RouteParserTests
             "test-uri",
         };
 
-        var uri = RouteParser.CombineSegments(uriSegments);
+        var uri = UriParser.CombineSegments(uriSegments);
         Assert.Equal("this/is/a/test-uri", uri);
     }
 
     [Fact]
-    public void RouteParser_CombineSegmentsWithQueryParameters()
+    public void UriParser_CombineSegmentsWithQueryParameters()
     {
         var uriSegments = new[]
         {
@@ -64,15 +64,15 @@ public class RouteParserTests
             { "test", "hello-world" },
         };
 
-        var uri = RouteParser.CombineSegments(uriSegments, queryParameters);
+        var uri = UriParser.CombineSegments(uriSegments, queryParameters);
         Assert.Equal("this/is/a/test-uri?coolParameter=44&test=hello-world", uri);
     }
 
     [Fact]
-    public void RouteParser_ParseSegments_Uri()
+    public void UriParser_ParseSegments_Uri()
     {
         var uri = "this/is/a/test-uri";
-        var uriSegments = RouteParser.ParseSegments(uri);
+        var uriSegments = UriParser.ParseSegments(uri);
 
         var targetUriSegments = new[]
         {
@@ -81,14 +81,14 @@ public class RouteParserTests
             "a",
             "test-uri",
         };
-        Assert.True(RouteParser.RoutesMatch(targetUriSegments, uriSegments));
+        Assert.True(UriParser.RoutesMatch(targetUriSegments, uriSegments));
     }
 
     [Fact]
-    public void RouteParser_ParseSegments_UriWithQueryParameters()
+    public void UriParser_ParseSegments_UriWithQueryParameters()
     {
         var uri = "this/is/a/test-uri?coolParameter=44&test=hello-world";
-        var uriSegments = RouteParser.ParseSegments(uri);
+        var uriSegments = UriParser.ParseSegments(uri);
 
         var targetUriSegments = new[]
         {
@@ -97,23 +97,23 @@ public class RouteParserTests
             "a",
             "test-uri",
         };
-        Assert.True(RouteParser.RoutesMatch(targetUriSegments, uriSegments));
+        Assert.True(UriParser.RoutesMatch(targetUriSegments, uriSegments));
     }
 
     [Fact]
-    public void RouteParser_RemoveQueryParameters()
+    public void UriParser_RemoveQueryParameters()
     {
         var uri = "this/is/a/test-uri?coolParameter=44&test=hello-world";
-        var uriWithoutQueryParameters = RouteParser.RemoveQueryParameters(uri);
+        var uriWithoutQueryParameters = UriParser.RemoveQueryParameters(uri);
 
         Assert.Equal("this/is/a/test-uri", uriWithoutQueryParameters);
     }
 
     [Fact]
-    private void RouteParser_ExtractQueryParameters()
+    private void UriParser_ExtractQueryParameters()
     {
         var uri = "this/is/a/test-uri?coolParameter=44&test=hello-world";
-        var queryParameters = RouteParser.ExtractQueryParameters(uri);
+        var queryParameters = UriParser.ExtractQueryParameters(uri);
 
         var targetQueryParameters = new Dictionary<string, object?>()
         {

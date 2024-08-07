@@ -2,16 +2,22 @@
 
 <h1>Hello, world!</h1>
 
-Welcome to your new app.
+<div>
+    <a href="counter?differentParameterName=10">
+        Counter with parameter
+    </a>
 
-<a href="counter?differentParameterName=10">
-    Counter with parameter
-</a>
+    <button @onclick="@(() => NavigationManager.NavigateTo("counter?differentParameterName=10"))">
+        Counter with parameter using the nav-manager
+    </button>
 
-<button @onclick="@(() => NavigationManager.NavigateTo("counter?differentParameterName=10"))">
-    Counter with parameter using the nav-manager
-</button>
+    <button @onclick="@NavigateToCounter">
+        To Counter via component
+    </button>
+</div>
 
-<button @onclick="@NavigateToCounter">
-    To Counter via component
-</button>
+<div>
+    <button @onclick="@NavigateToDirectiveComponent">
+        Directive Component
+    </button>
+</div>

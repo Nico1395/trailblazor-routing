@@ -23,7 +23,7 @@ public static class RoutingDependencyInjection
         services.AddScoped<IQueryParameterParser, QueryParameterParser>();
 
         services.AddScoped<IRouteProvider, RouteProvider>();
-        services.AddScoped<IRouteParser, RouteParser>();
+        services.AddScoped<IUriParser, UriParser>();
         services.AddScoped<IRouterContextAccessor, RouterContextAccessor>();
         services.AddScoped<INavigator, Navigator>();
 

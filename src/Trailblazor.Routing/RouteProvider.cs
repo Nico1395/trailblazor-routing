@@ -8,7 +8,7 @@ namespace Trailblazor.Routing;
 /// Service provides registered routes.
 /// </summary>
 internal sealed class RouteProvider(
-    IRouteParser _routeParser,
+    IUriParser _uriParser,
     IInternalRouteResolver _internalRouteResolver,
     NavigationManager _navigationManager) : IRouteProvider
 {
@@ -47,7 +47,7 @@ internal sealed class RouteProvider(
     /// <returns>Route if found.</returns>
     public Route? FindRoute(string relativeUri)
     {
-        relativeUri = _routeParser.RemoveQueryParameters(relativeUri);
+        relativeUri = _uriParser.RemoveQueryParameters(relativeUri);
         return GetRoutes().Select(p => p.FindRoute(relativeUri)).Where(p => p != null).SingleOrDefault();
     }
 

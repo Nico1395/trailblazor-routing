@@ -14,4 +14,9 @@ public partial class Home : ComponentBase
     {
         Navigator.NavigateTo<Counter>(d => d.AddParameter(c => c.InitialCounter, 50));
     }
+
+    private void NavigateToDirectiveComponent()
+    {
+        Navigator.NavigateTo<DirectiveComponent>(d => d.AddParameter(c => c.QueryParameter, DateTime.Now));
+    }
 }

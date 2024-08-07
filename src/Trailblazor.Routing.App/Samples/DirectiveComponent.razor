@@ -1,0 +1,11 @@
+﻿@page "/directive-component"
+@page "/alternative-directive-route"
+
+<h3>Query Parameter: @(QueryParameter?.ToString() ?? "none")</h3>
+
+@code
+{
+    [Parameter]
+    [QueryParameter("queryParameter")]
+    public DateTime? QueryParameter { get; set; }
+}
