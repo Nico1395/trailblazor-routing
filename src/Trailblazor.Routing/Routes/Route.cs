@@ -18,6 +18,7 @@ public record Route
     /// <summary>
     /// URI of the route. This is unique in the system.
     /// </summary>
+    [StringSyntax(StringSyntaxAttribute.Uri)]
     public string Uri { get; internal set; } = string.Empty;
 
     /// <summary>

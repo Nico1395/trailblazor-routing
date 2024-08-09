@@ -12,11 +12,13 @@ public partial class Home : ComponentBase
 
     private void NavigateToCounter()
     {
-        Navigator.NavigateTo<Counter>(d => d.AddParameter(c => c.InitialCounter, 50));
+        Navigator.NavigateTo<Counter>(d => d.WithParameter(c => c.InitialCounter, 50));
     }
 
     private void NavigateToDirectiveComponent()
     {
-        Navigator.NavigateTo<DirectiveComponent>(d => d.AddParameter(c => c.QueryParameter, DateTime.Now));
+        Navigator.NavigateTo<DirectiveComponent>(d => d
+            .WithParameter(c => c.QueryParameter, DateTime.Now)
+            .WithUri("/alternative-directive-route"));
     }
 }
