@@ -143,23 +143,26 @@ An alternative to navigation is to navigate using components. This is especially
 
 For navigation using **Trailblazor Routing** the `INavigator` interface can be injected and used. The interface also offers more customized navigation using configurable `NavigationDescriptor`s.
 
+### Multiple URIs per component
+If multiple routes, essentially meaning URIs are found for a component, it is unclear what URI to pick for navigation. Thats why, in this case, its mandatory to specify the URI to be navigated to.
+
 ```cs
 public partial class Home : ComponentBase
 {
     [Inject]
     private INavigator Navigator { get; set; } = null!;
-
+    
     private void NavigateToCounter()
     {
-        // If component is associated with exactly one route
-        Navigator.NavigateTo<Counter>(d => d.AddParameter(c => c.InitialCounter, 50));
+        Navigator.NavigateTo<Counter>(d => d.WithParameter(c => c.InitialCounter, 50));
+    }
 
-        // If component is associated with multiple routes
-        Navigator.NavigateTo<Counter>(d =>
-        {
-            d.Uri = "alternative-counter-uri";
-            d.AddParameter(c => c.InitialCounter, 50);
-        });
+    private void NavigateToSomeComponent()
+    {
+        // In case the component has two routes/URIs associated with it, the target URI has to be specified
+        Navigator.NavigateTo<SomeComponent>(d => d
+            .WithParameter(c => c.SomeQueryParameter, DateTime.Now)
+            .WithUri("/second-uri"));
     }
 }
 ```
