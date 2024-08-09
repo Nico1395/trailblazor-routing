@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Trailblazor.Routing.Routes;
 
@@ -51,7 +52,7 @@ public sealed class RouteBuilder<TComponent>
     /// </summary>
     /// <param name="uri">The routes URI.</param>
     /// <returns>Route builder for further configurations.</returns>
-    public RouteBuilder<TComponent> WithUri(string uri)
+    public RouteBuilder<TComponent> WithUri([StringSyntax(StringSyntaxAttribute.Uri)] string uri)
     {
         _route.Uri = uri.TrimStart('/');
         return this;

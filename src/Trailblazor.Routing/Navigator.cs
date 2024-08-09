@@ -62,20 +62,21 @@ internal sealed class Navigator(
     /// <para>
     /// The <typeparamref name="TComponent"/> has to be associated and registered with a route. If multiple routes are found an exception is being thrown
     /// since its impossible to know what route to navigate to, if there are multiple options. If that is the case consider configuring the URI of the
-    /// <see cref="NavigationDescriptor{TComponent}"/> using the action.
+    /// <see cref="NavigationDescriptorBuilder{TComponent}"/> using the action.
     /// </para>
     /// <para>
     /// Allows setting query parameters by specifying properties and their values.
     /// </para>
     /// </remarks>
     /// <typeparam name="TComponent">Type of component associated with a route.</typeparam>
-    /// <param name="descriptorAction">Action for configuring a <see cref="NavigationDescriptor{TComponent}"/>.</param>
-    public void NavigateTo<TComponent>(Action<NavigationDescriptor<TComponent>>? descriptorAction = null)
-        where TComponent : IComponent
+    /// <param name="builderAction">Action for configuring a <see cref="NavigationDescriptorBuilder{TComponent}"/>.</param>
+    public void NavigateTo<TComponent>(Action<NavigationDescriptorBuilder<TComponent>>? builderAction = null)
+        where TComponent : class, IComponent
     {
-        var navigationDescriptor = new NavigationDescriptor<TComponent>();
-        descriptorAction?.Invoke(navigationDescriptor);
+        var builder = new NavigationDescriptorBuilder<TComponent>();
+        builderAction?.Invoke(builder);
 
+        var navigationDescriptor = builder.Build();
         if (navigationDescriptor.Uri == null)
         {
             var componentType = typeof(TComponent);
@@ -94,7 +95,7 @@ internal sealed class Navigator(
     /// Method navigates to the URI the specified <paramref name="navigationDescriptor"/> results in.
     /// </summary>
     /// <param name="navigationDescriptor">Navigation descriptor describing the route to navigate to.</param>
-    private void NavigateToInternal(NavigationDescriptorBase navigationDescriptor)
+    private void NavigateToInternal(NavigationDescriptor navigationDescriptor)
     {
         if (navigationDescriptor.Uri == null)
             throw new NoUriSpecifiedException();
