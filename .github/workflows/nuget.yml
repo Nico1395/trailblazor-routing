@@ -27,7 +27,7 @@ jobs:
         dotnet-version: 8.0.x
 
     - name: "Restore dependencies"
-      run: "dotnet restore ${{ env.PROJECT_SOLUTION }}"
+      run: "dotnet restore ${{ env.PROJECT }}"
 
     - name: "Build project"
       run: "dotnet build ${{ env.PROJECT }} --no-restore --configuration Release"
