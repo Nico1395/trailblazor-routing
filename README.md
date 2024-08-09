@@ -40,6 +40,7 @@ The support for `@page` directives is limited. But any component with that direc
 #### Limitations
 - Query parameters have to be configured using the `ParameterAttribute` and either `SupplyParameterFromQueryAttribute` or `QueryParameterAttribute`.
 - Following syntax is _**not**_ supported: `@page "/some-uri/{SomeParameterProperty}`
+- _**To be clear: Query parameters in the URI of `@page` directives are explicitly now supported as of now!**_
 
 For specifics about query parameters see the appropriate section below.
 
