@@ -7,35 +7,53 @@ using Trailblazor.Routing.Validation;
 
 namespace Trailblazor.Routing;
 
+/// <summary>
+/// Framework internal route cache.
+/// </summary>
 internal sealed class InternalRouteCache(
     IEnumerable<IRoutingProfile> _routingProfiles,
     IInternalRouteValidator _internalRouteValidator) : IInternalRouteCache
 {
     private List<Route>? _cachedRoutes;
 
+    /// <summary>
+    /// Method returns cached routes.
+    /// </summary>
+    /// <returns>Cached routes.</returns>
     public List<Route> GetCachedRoutes()
     {
         return _cachedRoutes ??= ResolveRoutes();
     }
 
+    /// <summary>
+    /// Method resolves configured routes.
+    /// </summary>
+    /// <returns>Resolved routes.</returns>
     private List<Route> ResolveRoutes()
     {
-        var routes = _routingProfiles.SelectMany(p => p.ComposeConfigurationInternal().GetConfiguredRoutes()).ToList();
-        routes.AddRange(ResolveComponentRoutes(routes));
+        var routes = ResolveProfileRoutes().Concat(ResolveComponentRoutes()).ToList();
+        var matchmakedRoutes = GetMatchmakedRoutes(routes);
 
-        _internalRouteValidator.ValidateRoutes(routes);
-        return routes;
+        _internalRouteValidator.ValidateRoutes(matchmakedRoutes);
+        return matchmakedRoutes;
     }
 
-    private List<Route> ResolveComponentRoutes(List<Route> registeredRoutes)
+    private List<Route> ResolveProfileRoutes()
+    {
+        return _routingProfiles.SelectMany(p => p.ComposeConfigurationInternal().GetConfiguredRoutes()).ToList();
+    }
+
+    /// <summary>
+    /// Method resolves routes from components with page directives that are registered with the <see cref="InternalRoutingProfile"/>.
+    /// </summary>
+    /// <returns>Routes resolved from components with page directives.</returns>
+    private List<Route> ResolveComponentRoutes()
     {
         var internalRoutingProfile = _routingProfiles.OfType<InternalRoutingProfile>().Single();
         var componentRoutes = new List<Route>();
 
         foreach (var component in internalRoutingProfile.ComponentTypes)
         {
-            var routeAttributes = component.GetCustomAttributes<RouteAttribute>();
-
             var routeUris = component.GetCustomAttributes<RouteAttribute>().Select(r => r.Template.TrimStart('/')).Distinct();
             var routeMetadata = component.GetCustomAttributes<RouteMetadataAttribute>().ToDictionary(k => k.MetadataKey, v => v.MetadataValue);
 
@@ -52,23 +70,44 @@ internal sealed class InternalRouteCache(
             }
         }
 
-        MatchmakeRoutes(componentRoutes, registeredRoutes);
+        return componentRoutes;
+    }
+
+    private List<Route> GetMatchmakedRoutes(List<Route> routes)
+    {
+        foreach (var route in routes)
+        {
+            // TODO -> Evaluate relationship descriptors
+            if (route.ParentDescriptor != null)
+            {
+                var parentRoute = routes.SingleOrDefault(r =>
+                    r.Component == route.ParentDescriptor.ParentComponent &&
+                    route.ParentDescriptor.ParentUri != null ? r.Uri == route.ParentDescriptor.ParentUri : true);
+
+                if (parentRoute == null)
+                    throw new RouteNotFoundException($"Route for component '{route.ParentDescriptor.ParentComponent}' and URI '{route.ParentDescriptor.ParentUri}' not found when attempting to assign it as a parent to route for component '{route.Component}' and URI '{route.Uri}'.");
+
+                // TODO -> Is this causing double assigments?
+                // TODO -> Should this be moved to matchmaking?
+                route.Parent = parentRoute;
+                parentRoute.Children.Add(route);
+            }
+
+            MatchmakeChildren(route, routes);
+            MatchmakeParent(route, routes);
+        }
 
         // Only return all routes that dont have a parent. The ones that do, have to be included somewhere in the hierarchy
-        return componentRoutes.Where(r => r.Parent == null).ToList();
+        return routes.Where(r => r.Parent == null).ToList();
     }
 
-    private void MatchmakeRoutes(List<Route> componentRoutes, List<Route> registeredRoutes)
-    {
-        var routes = componentRoutes.Concat(registeredRoutes).ToList();
-
-        foreach (var componentRoute in componentRoutes)
-        {
-            MatchmakeChildren(componentRoute, routes);
-            MatchmakeParent(componentRoute, routes);
-        }
-    }
-
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="componentRoute"></param>
+    /// <param name="routes"></param>
+    /// <exception cref="RouteNotFoundException"></exception>
+    /// <exception cref="RouteRelationshipException"></exception>
     private void MatchmakeChildren(Route componentRoute, List<Route> routes)
     {
         var childComponents = componentRoute.Component.GetCustomAttribute<RouteChildrenAttribute>()?.ChildrenComponents ?? [];
@@ -92,6 +131,12 @@ internal sealed class InternalRouteCache(
         }
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="componentRoute"></param>
+    /// <param name="routes"></param>
+    /// <exception cref="RouteNotFoundException"></exception>
     private void MatchmakeParent(Route componentRoute, List<Route> routes)
     {
         var parentComponent = componentRoute.Component.GetCustomAttribute<RouteParentAttribute>()?.Parent;

@@ -76,12 +76,64 @@ public sealed class RouteBuilder<TComponent>
     }
 
     /// <summary>
+    /// Method adds a child route to the route.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// This method can be used to set routes from other profiles or routes registerd using attributes and directives to be
+    /// children of the route being configured.
+    /// </para>
+    /// <para>
+    /// If the target <typeparamref name="TChildComponent"/> has multiple routes/URIs associated with it, it will be required
+    /// to specify the otherwise optional <paramref name="childUri"/>.
+    /// </para>
+    /// </remarks>
+    /// <typeparam name="TChildComponent">Type of child route.</typeparam>
+    /// <param name="childUri">URI of the child route.</param>
+    /// <returns>Route builder for further configurations.</returns>
+    public RouteBuilder<TComponent> WithChild<TChildComponent>(string? childUri = null)
+        where TChildComponent : IComponent
+    {
+        _route.ChildDescriptors.Add(new RouteChildDescriptor(typeof(TChildComponent), childUri));
+        return this;
+    }
+
+    /// <summary>
+    /// Method sets the parent route of the route.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// This method can be used to set the routes parent to be a route from other profiles or from routes registerd using attributes and directives.
+    /// </para>
+    /// <para>
+    /// If the target <typeparamref name="TParentComponent"/> has multiple routes/URIs associated with it, it will be required
+    /// to specify the otherwise optional <paramref name="parentUri"/>.
+    /// </para>
+    /// </remarks>
+    /// <typeparam name="TParentComponent">Type of parent route.</typeparam>
+    /// <param name="parentUri">URI of the parent route.</param>
+    /// <returns>Route builder for further configurations.</returns>
+    public RouteBuilder<TComponent> WithParent<TParentComponent>(string? parentUri = null)
+        where TParentComponent : IComponent
+    {
+        // Only set the parent descriptor if the parent wasnt previously set.
+        if (_route.Parent == null)
+            _route.ParentDescriptor = new RouteParentDescriptor(typeof(TParentComponent), parentUri);
+
+        return this;
+    }
+
+    /// <summary>
     /// Method sets the specified <paramref name="parentRoute"/> to be the configured routes parent.
     /// </summary>
     /// <param name="parentRoute">The to be configured routes parent.</param>
     /// <returns>Route builder for further configurations.</returns>
     internal RouteBuilder<TComponent> SetParent(Route parentRoute)
     {
+        // Override the parent descriptor
+        if (_route.ParentDescriptor != null)
+            _route.ParentDescriptor = null;
+
         _route.Parent = parentRoute;
         return this;
     }

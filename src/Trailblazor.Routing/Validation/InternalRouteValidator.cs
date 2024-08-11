@@ -4,14 +4,14 @@ using Trailblazor.Routing.Routes;
 namespace Trailblazor.Routing.Validation;
 
 /// <summary>
-/// Internal security manager security checking routes and profiles.
+/// Service validates routes.
 /// </summary>
 internal sealed class InternalRouteValidator : IInternalRouteValidator
 {
     /// <summary>
-    /// Method security checks the specified <paramref name="routes"/>.
+    /// Method validates specified <paramref name="routes"/> for integrity and functionality.
     /// </summary>
-    /// <param name="routes">Routes to be security checked.</param>
+    /// <param name="routes">Routes to be validated.</param>
     public void ValidateRoutes(List<Route> routes)
     {
         routes.ForEach(route =>
@@ -34,6 +34,10 @@ internal sealed class InternalRouteValidator : IInternalRouteValidator
             throw new UriRegisteredToMultipleRoutesException(route.Uri, duplicateRoutes.Select(r => r.Component).Concat([route.Component]).ToList());
     }
 
+    /// <summary>
+    /// Method validates the configured <paramref name="route"/>s relationships.
+    /// </summary>
+    /// <param name="route">Route whose relationships are to be validated.</param>
     private void ValidateRelationships(Route route)
     {
         var circularDependentChild = GetCircularDependentRoute(route);
@@ -41,11 +45,16 @@ internal sealed class InternalRouteValidator : IInternalRouteValidator
             throw new RouteRelationshipException($"Routes for components '{route.Component.FullName}' (parent) and '{circularDependentChild.Component.FullName}' (child) have a circular relationship.");
     }
 
-    private Route? GetCircularDependentRoute(Route route)
+    /// <summary>
+    /// Method gets the route the <paramref name="parentRoute"/> has a circular relationship with.
+    /// </summary>
+    /// <param name="parentRoute">Parent route whose children are to be checked for circular dependencies.</param>
+    /// <returns>Route the <paramref name="parentRoute"/> has a circular relationship with.</returns>
+    private Route? GetCircularDependentRoute(Route parentRoute)
     {
-        foreach (var child in route.Children)
+        foreach (var child in parentRoute.Children)
         {
-            if (child == route)
+            if (child == parentRoute)
                 return child;
 
             var circularDependentChild = GetCircularDependentRoute(child);

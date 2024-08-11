@@ -10,10 +10,10 @@ namespace Trailblazor.Routing.Routes;
 /// </summary>
 public record Route
 {
-    /// <summary>
-    /// Dictionary of metadata values.
-    /// </summary>
     private Dictionary<string, object?> _metadata = [];
+
+    internal RouteParentDescriptor? ParentDescriptor { get; set; }
+    internal List<RouteChildDescriptor> ChildDescriptors { get; set; } = [];
 
     /// <summary>
     /// URI of the route. This is unique in the system.
