@@ -5,13 +5,13 @@
 /// </summary>
 public sealed class RouteNotFoundException : Exception
 {
-    internal RouteNotFoundException(Type routeComponentType)
-        : base($"No route that is associated with a component of type '{routeComponentType.FullName}' has been found.")
+    internal RouteNotFoundException(string message)
+        : base(message)
     {
     }
 
-    internal RouteNotFoundException(string uri)
-        : base($"No route with the URI '{uri}' has been found.")
+    internal RouteNotFoundException(Type routeComponentType)
+        : base($"No route that is associated with a component of type '{routeComponentType.FullName}' has been found.")
     {
     }
 

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Trailblazor.Routing.Profiles;
+using Trailblazor.Routing.Validation;
 
 namespace Trailblazor.Routing.DependencyInjection;
 
@@ -18,8 +19,9 @@ public static class RoutingDependencyInjection
     /// <returns><see cref="IServiceCollection"/> for further configurations.</returns>
     public static IServiceCollection AddTrailblazorRouting(this IServiceCollection services, Action<RoutingOptions>? optionsAction = null)
     {
-        services.AddScoped<IInternalRouteResolver, InternalRouteResolver>();
+        services.AddScoped<IInternalRouteCache, InternalRouteCache>();
         services.AddScoped<IInternalRouterContextManager, InternalRouterContextManager>();
+        services.AddScoped<IInternalRouteValidator, InternalRouteValidator>();
         services.AddScoped<IQueryParameterParser, QueryParameterParser>();
 
         services.AddScoped<IRouteProvider, RouteProvider>();
@@ -32,7 +34,7 @@ public static class RoutingDependencyInjection
         services.AddScoped<IRoutingOptionsAccessor>(serviceProvider => new RoutingOptionsAccessor(options));
 
         var routingProfiles = options.GetProfileTypesInternal();
-        services.AddSingleton(_routingProfileInterfaceType, options.GetInternalRoutingProfile());
+        services.AddSingleton(_routingProfileInterfaceType, options.InternalRoutingProfile);
         foreach (var profileType in routingProfiles)
             services.AddSingleton(_routingProfileInterfaceType, profileType);
 

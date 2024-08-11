@@ -12,6 +12,8 @@ internal sealed class InternalRoutingProfile : RoutingProfileBase
 {
     private readonly List<Route> _routes = [];
 
+    internal readonly List<Type> ComponentTypes = [];
+
     protected sealed override void Configure(RoutingProfileConfiguration configuration)
     {
         foreach (var route in _routes)
