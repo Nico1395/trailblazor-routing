@@ -201,9 +201,3 @@ public class Service(IRoutingOptionsAccessor _routingOptionsAccessor)
     private readonly RoutingOptions _routingOptions = _routingOptionsAccessor.GetRoutingOptions();
 }
 ```
-
-## Configuring Parsing Query Parameters
-
-Options for configuring parsing query parameters can be configured using the `RouterOptions` when registering.
-
-If there is a need for more customization, in this department especially, please just notify me and I will see into it.
