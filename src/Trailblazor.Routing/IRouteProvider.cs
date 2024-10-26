@@ -8,7 +8,13 @@ namespace Trailblazor.Routing;
 public interface IRouteProvider
 {
     /// <summary>
-    /// Method returns all registered routes.
+    /// Method returns all registered routes in hierarchy.
+    /// </summary>
+    /// <returns>All registered routes.</returns>
+    public IReadOnlyList<Route> GetRoutesInHierarchy();
+
+    /// <summary>
+    /// Method returns all registered routes flattened.
     /// </summary>
     /// <returns>All registered routes.</returns>
     public IReadOnlyList<Route> GetRoutes();

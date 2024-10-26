@@ -8,7 +8,7 @@ public class RouteTests
     public void Route_FindRoute()
     {
         var routeProvider = RouteDependencyInjection.ServiceProvider.GetRequiredService<IRouteProvider>();
-        var rootRoute = routeProvider.GetRoutes().Single();
+        var rootRoute = routeProvider.GetRoutesInHierarchy().Single();
 
         var firstChildRoute = rootRoute.FindRoute("child-route/first");
         Assert.NotNull(firstChildRoute);
