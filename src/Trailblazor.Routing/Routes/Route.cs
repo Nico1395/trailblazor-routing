@@ -8,7 +8,7 @@ namespace Trailblazor.Routing.Routes;
 /// <summary>
 /// Object represents a route.
 /// </summary>
-public record Route
+public sealed record Route
 {
     private Dictionary<string, object?> _metadata = [];
 

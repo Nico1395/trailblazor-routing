@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
 using System.Reflection;
-using Trailblazor.Routing.Exceptions;
 using Trailblazor.Routing.Profiles;
 using Trailblazor.Routing.Routes;
 using Trailblazor.Routing.Validation;
@@ -32,15 +31,15 @@ internal sealed class InternalRouteCache(
     private List<Route> ResolveRoutes()
     {
         var routes = ResolveProfileRoutes().Concat(ResolveComponentRoutes()).ToList();
-        var matchmakedRoutes = GetMatchmakedRoutes(routes);
+        var routesInHierarchy = BuildHierarchy(routes);
 
-        _internalRouteValidator.ValidateRoutes(matchmakedRoutes);
-        return matchmakedRoutes;
+        _internalRouteValidator.ValidateRoutes(routesInHierarchy);
+        return routesInHierarchy;
     }
 
-    private List<Route> ResolveProfileRoutes()
+    private IEnumerable<Route> ResolveProfileRoutes()
     {
-        return _routingProfiles.SelectMany(p => p.ComposeConfigurationInternal().GetConfiguredRoutes()).ToList();
+        return _routingProfiles.SelectMany(p => p.ComposeConfigurationInternal().GetConfiguredRoutes());
     }
 
     /// <summary>
@@ -73,83 +72,63 @@ internal sealed class InternalRouteCache(
         return componentRoutes;
     }
 
-    private List<Route> GetMatchmakedRoutes(List<Route> routes)
+    public List<Route> BuildHierarchy(List<Route> routes)
     {
+        var uriLookup = routes.ToDictionary(route => route.Uri, route => route);
+        var typeLookup = routes.GroupBy(route => route.Component).ToDictionary(g => g.Key, g => g.ToList());
+        var topLevelRoutes = new List<Route>();
+
         foreach (var route in routes)
         {
-            // TODO -> Evaluate relationship descriptors
-            if (route.ParentDescriptor != null)
-            {
-                var parentRoute = routes.SingleOrDefault(r =>
-                    r.Component == route.ParentDescriptor.ParentComponent &&
-                    route.ParentDescriptor.ParentUri != null ? r.Uri == route.ParentDescriptor.ParentUri : true);
+            ProcessParent(route, uriLookup, typeLookup);
+            ProcessChildren(route, uriLookup, typeLookup);
 
-                if (parentRoute == null)
-                    throw new RouteNotFoundException($"Route for component '{route.ParentDescriptor.ParentComponent}' and URI '{route.ParentDescriptor.ParentUri}' not found when attempting to assign it as a parent to route for component '{route.Component}' and URI '{route.Uri}'.");
-
-                // TODO -> Is this causing double assigments?
-                // TODO -> Should this be moved to matchmaking?
-                route.Parent = parentRoute;
-                parentRoute.Children.Add(route);
-            }
-
-            MatchmakeChildren(route, routes);
-            MatchmakeParent(route, routes);
+            if (route.Parent == null)
+                topLevelRoutes.Add(route); // Add only top-level routes
         }
 
-        // Only return all routes that dont have a parent. The ones that do, have to be included somewhere in the hierarchy
-        return routes.Where(r => r.Parent == null).ToList();
+        return topLevelRoutes;
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="componentRoute"></param>
-    /// <param name="routes"></param>
-    /// <exception cref="RouteNotFoundException"></exception>
-    /// <exception cref="RouteRelationshipException"></exception>
-    private void MatchmakeChildren(Route componentRoute, List<Route> routes)
+    private void ProcessParent(Route route, Dictionary<string, Route> uriLookup, Dictionary<Type, List<Route>> typeLookup)
     {
-        var childComponents = componentRoute.Component.GetCustomAttribute<RouteChildrenAttribute>()?.ChildrenComponents ?? [];
-        var children = routes.Where(r => childComponents.Any(c => c == r.Component)).ToList();
-
-        if (childComponents.Length != children.Count)
-            throw new RouteNotFoundException($"Some child routes of route for component '{componentRoute.Component.FullName}' have not been found: Child count should be {childComponents.Length}, but is {children.Count}.");
-
-        foreach (var child in children)
-        {
-            var alreadyMatchmaked = componentRoute.Children.Contains(child);
-            if (alreadyMatchmaked)
-                continue;
-
-            var childAlreadyHasADifferentParent = child.Parent != null && child.Parent.Component != componentRoute.Component;
-            if (childAlreadyHasADifferentParent)
-                throw new RouteRelationshipException(componentRoute.Component, child.Component, child.Parent!.Component);
-
-            componentRoute.Children.Add(child);
-            child.Parent = componentRoute;
-        }
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="componentRoute"></param>
-    /// <param name="routes"></param>
-    /// <exception cref="RouteNotFoundException"></exception>
-    private void MatchmakeParent(Route componentRoute, List<Route> routes)
-    {
-        var parentComponent = componentRoute.Component.GetCustomAttribute<RouteParentAttribute>()?.Parent;
-        var parent = routes.SingleOrDefault(r => r.Component == parentComponent);
-
-        var alreadyMatchmaked = parentComponent != null && parent != null && parent.Children.Contains(componentRoute);
-        if (alreadyMatchmaked)
+        var parentDescriptor = route.ParentDescriptor;
+        if (parentDescriptor == null)
             return;
 
-        if (parentComponent != null && parent == null)
-            throw new RouteNotFoundException($"Route '{componentRoute.Uri}' has been configured with component '{parentComponent.FullName}' as its parent, however no route has been associated with the parent component.");
+        var parentRoute = FindRouteByDescriptor(parentDescriptor.ParentUri, parentDescriptor.ParentComponent, uriLookup, typeLookup)
+            ?? throw new Exception($"Parent route not found for route '{route.Uri}'. Check URI '{parentDescriptor.ParentUri}' or component '{parentDescriptor.ParentComponent}'.");
 
-        componentRoute.Parent = parent;
-        parent?.Children.Add(componentRoute);
+        route.Parent = parentRoute;
+        parentRoute.Children.Add(route);
+    }
+
+    private void ProcessChildren(Route route, Dictionary<string, Route> uriLookup, Dictionary<Type, List<Route>> typeLookup)
+    {
+        foreach (var childDescriptor in route.ChildDescriptors)
+        {
+            var childRoute = FindRouteByDescriptor(childDescriptor.ChildUri, childDescriptor.ChildComponent, uriLookup, typeLookup)
+                ?? throw new Exception($"Child route not found for route '{route.Uri}'. Check URI '{childDescriptor.ChildUri}' or component '{childDescriptor.ChildComponent}'.");
+
+            childRoute.Parent = route;
+            route.Children.Add(childRoute);
+        }
+    }
+
+    private Route? FindRouteByDescriptor(string? uri, Type component, Dictionary<string, Route> uriLookup, Dictionary<Type, List<Route>> typeLookup)
+    {
+        if (!string.IsNullOrEmpty(uri))
+        {
+            if (uriLookup.TryGetValue(uri, out var route))
+                return route;
+
+            return null;
+        }
+
+        if (typeLookup.TryGetValue(component, out var candidates) && candidates.Count == 1)
+            return candidates.First();
+
+        // Ambiguous or missing route for this component type
+        return null;
     }
 }
