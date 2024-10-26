@@ -16,9 +16,18 @@ internal sealed class RouteProvider(
     /// Method returns all registered routes.
     /// </summary>
     /// <returns>All registered routes.</returns>
+    public IReadOnlyList<Route> GetRoutesInHierarchy()
+    {
+        return _internalRouteResolver.GetCachedRoutesInHierarchy();
+    }
+
+    /// <summary>
+    /// Method returns all registered routes flattened.
+    /// </summary>
+    /// <returns>All registered routes.</returns>
     public IReadOnlyList<Route> GetRoutes()
     {
-        return _internalRouteResolver.GetCachedRoutes();
+        return _internalRouteResolver.GetCachedRoutesInHierarchy();
     }
 
     /// <summary>
@@ -43,7 +52,7 @@ internal sealed class RouteProvider(
     public Route? FindRoute(string relativeUri)
     {
         relativeUri = _uriParser.RemoveQueryParameters(relativeUri);
-        return _internalRouteResolver.GetCachedRoutes().Select(p => p.FindRoute(relativeUri)).Where(p => p != null).SingleOrDefault();
+        return _internalRouteResolver.GetCachedRoutesInHierarchy().Select(p => p.FindRoute(relativeUri)).Where(p => p != null).SingleOrDefault();
     }
 
     /// <summary>
@@ -53,7 +62,7 @@ internal sealed class RouteProvider(
     /// <returns>Routes associated with the specified <paramref name="componentType"/>.</returns>
     public List<Route> FindRoutes(Type componentType)
     {
-        return _internalRouteResolver.GetCachedRoutes().SelectMany(p => p.FindRoutes(componentType)).ToList();
+        return _internalRouteResolver.GetCachedRoutesInHierarchy().SelectMany(p => p.FindRoutes(componentType)).ToList();
     }
 
     /// <summary>

@@ -13,25 +13,30 @@ internal sealed class InternalRouteCache(
     IEnumerable<IRoutingProfile> _routingProfiles,
     IInternalRouteValidator _internalRouteValidator) : IInternalRouteCache
 {
+    private List<Route>? _cachedRoutesInHieararchy;
     private List<Route>? _cachedRoutes;
 
     /// <summary>
     /// Method returns cached routes.
     /// </summary>
     /// <returns>Cached routes.</returns>
-    public List<Route> GetCachedRoutes()
+    public List<Route> GetCachedRoutesInHierarchy()
     {
-        return _cachedRoutes ??= ResolveRoutes();
+        return _cachedRoutesInHieararchy ??= ResolveRoutesInHierarchy();
     }
 
     /// <summary>
-    /// Method resolves configured routes.
+    /// Method returns cached routes flattened.
     /// </summary>
-    /// <returns>Resolved routes.</returns>
-    private List<Route> ResolveRoutes()
+    /// <returns>Cached routes.</returns>
+    public List<Route> GetCachedRoutes()
     {
-        var routes = ResolveProfileRoutes().Concat(ResolveComponentRoutes()).ToList();
-        var routesInHierarchy = BuildHierarchy(routes);
+        return _cachedRoutes ??= ResolveProfileRoutes().Concat(ResolveComponentRoutes()).ToList();
+    }
+
+    private List<Route> ResolveRoutesInHierarchy()
+    {
+        var routesInHierarchy = BuildHierarchyRoutes();
 
         _internalRouteValidator.ValidateRoutes(routesInHierarchy);
         return routesInHierarchy;
@@ -42,10 +47,6 @@ internal sealed class InternalRouteCache(
         return _routingProfiles.SelectMany(p => p.ComposeConfigurationInternal().GetConfiguredRoutes());
     }
 
-    /// <summary>
-    /// Method resolves routes from components with page directives that are registered with the <see cref="InternalRoutingProfile"/>.
-    /// </summary>
-    /// <returns>Routes resolved from components with page directives.</returns>
     private List<Route> ResolveComponentRoutes()
     {
         var internalRoutingProfile = _routingProfiles.OfType<InternalRoutingProfile>().Single();
@@ -72,19 +73,21 @@ internal sealed class InternalRouteCache(
         return componentRoutes;
     }
 
-    public List<Route> BuildHierarchy(List<Route> routes)
+    public List<Route> BuildHierarchyRoutes()
     {
-        var uriLookup = routes.ToDictionary(route => route.Uri, route => route);
-        var typeLookup = routes.GroupBy(route => route.Component).ToDictionary(g => g.Key, g => g.ToList());
+        var allResolvedFlattenedCachedRoutes = GetCachedRoutes();
+
+        var uriLookup = allResolvedFlattenedCachedRoutes.ToDictionary(route => route.Uri, route => route);
+        var typeLookup = allResolvedFlattenedCachedRoutes.GroupBy(route => route.Component).ToDictionary(g => g.Key, g => g.ToList());
         var topLevelRoutes = new List<Route>();
 
-        foreach (var route in routes)
+        foreach (var route in allResolvedFlattenedCachedRoutes)
         {
             ProcessParent(route, uriLookup, typeLookup);
             ProcessChildren(route, uriLookup, typeLookup);
 
             if (route.Parent == null)
-                topLevelRoutes.Add(route); // Add only top-level routes
+                topLevelRoutes.Add(route);
         }
 
         return topLevelRoutes;

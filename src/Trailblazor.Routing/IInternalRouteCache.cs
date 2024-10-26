@@ -8,7 +8,13 @@ namespace Trailblazor.Routing;
 internal interface IInternalRouteCache
 {
     /// <summary>
-    /// Method returns cached routes.
+    /// Method returns cached routes in hierarchy.
+    /// </summary>
+    /// <returns>Cached routes.</returns>
+    internal List<Route> GetCachedRoutesInHierarchy();
+
+    /// <summary>
+    /// Method returns cached routes flattened.
     /// </summary>
     /// <returns>Cached routes.</returns>
     internal List<Route> GetCachedRoutes();
