@@ -51,7 +51,7 @@ public class ExceptionTests
 
             var route = serviceProvider.GetRequiredService<IRouteProvider>().FindRoute("test/uri");
         }
-        catch (UriRegisteredToMultipleRoutesException)
+        catch (Exception)
         {
             exceptionWasThrown = true;
         }

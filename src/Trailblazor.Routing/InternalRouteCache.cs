@@ -83,6 +83,7 @@ internal sealed class InternalRouteCache(
 
         foreach (var route in allResolvedFlattenedCachedRoutes)
         {
+            ProcessAttributesForRouteRelationships(route, typeLookup);
             ProcessParent(route, uriLookup, typeLookup);
             ProcessChildren(route, uriLookup, typeLookup);
 
@@ -91,6 +92,43 @@ internal sealed class InternalRouteCache(
         }
 
         return topLevelRoutes;
+    }
+
+    private void ProcessAttributesForRouteRelationships(Route route, Dictionary<Type, List<Route>> typeLookup)
+    {
+        var parentAttribute = route.Component.GetCustomAttribute<RouteParentAttribute>();
+        if (parentAttribute != null)
+        {
+            var parentType = parentAttribute.Parent;
+            if (typeLookup.TryGetValue(parentType, out var parentRoutes) && parentRoutes.Count == 1)
+            {
+                var parentRoute = parentRoutes.First();
+                route.Parent = parentRoute;
+                parentRoute.Children.Add(route);
+            }
+            else
+            {
+                throw new Exception($"Ambiguous or missing parent route for component '{route.Component}'. Expected exactly one matching route for parent component '{parentType}'.");
+            }
+        }
+
+        var childrenAttribute = route.Component.GetCustomAttribute<RouteChildrenAttribute>();
+        if (childrenAttribute != null)
+        {
+            foreach (var childType in childrenAttribute.ChildrenComponents)
+            {
+                if (typeLookup.TryGetValue(childType, out var childRoutes) && childRoutes.Count == 1)
+                {
+                    var childRoute = childRoutes.First();
+                    childRoute.Parent = route;
+                    route.Children.Add(childRoute);
+                }
+                else
+                {
+                    throw new Exception($"Ambiguous or missing child route for component '{route.Component}'. Expected exactly one matching route for child component '{childType}'.");
+                }
+            }
+        }
     }
 
     private void ProcessParent(Route route, Dictionary<string, Route> uriLookup, Dictionary<Type, List<Route>> typeLookup)
