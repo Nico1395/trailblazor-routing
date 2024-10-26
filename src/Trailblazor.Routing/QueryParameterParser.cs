@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
-using System.Globalization;
 using System.Reflection;
-using Trailblazor.Routing.DependencyInjection;
 using Trailblazor.Routing.Extensions;
 
 namespace Trailblazor.Routing;
@@ -9,14 +7,8 @@ namespace Trailblazor.Routing;
 /// <summary>
 /// Service parses query parameter values from strings into their respective type.
 /// </summary>
-internal sealed class QueryParameterParser(IRoutingOptionsAccessor _routingOptionsProvider) : IQueryParameterParser
+internal sealed class QueryParameterParser : IQueryParameterParser
 {
-    private CultureInfo? _numericParseCultureInfo;
-    private CultureInfo? _dateTimeParseCultureInfo;
-
-    private CultureInfo NumericParseCultureInfo => _numericParseCultureInfo ??= _routingOptionsProvider.GetRoutingOptions().QueryParameterParseOptions.NumericParseCultureInfo();
-    private CultureInfo DateTimeParseCultureInfo => _dateTimeParseCultureInfo ??= _routingOptionsProvider.GetRoutingOptions().QueryParameterParseOptions.DateTimeParseCultureInfo();
-
     /// <summary>
     /// Method parses <paramref name="rawQueryParameters"/> for the query parameter properties for components of type <paramref name="componentType"/>.
     /// </summary>
@@ -79,19 +71,19 @@ internal sealed class QueryParameterParser(IRoutingOptionsAccessor _routingOptio
             return boolValue;
         else if (componentParameterPropertyType.IsGuid() && Guid.TryParse(queryParameterValue, out var guidValue))
             return guidValue;
-        else if (componentParameterPropertyType.IsTimeOnly() && TimeOnly.TryParse(queryParameterValue, DateTimeParseCultureInfo, out var timeOnlyValue))
+        else if (componentParameterPropertyType.IsTimeOnly() && TimeOnly.TryParse(queryParameterValue, out var timeOnlyValue))
             return timeOnlyValue;
-        else if (componentParameterPropertyType.IsDateOnly() && DateOnly.TryParse(queryParameterValue, DateTimeParseCultureInfo, out var dateOnlyValue))
+        else if (componentParameterPropertyType.IsDateOnly() && DateOnly.TryParse(queryParameterValue, out var dateOnlyValue))
             return dateOnlyValue;
-        else if (componentParameterPropertyType.IsDateTime() && DateTime.TryParse(queryParameterValue, DateTimeParseCultureInfo, out var dateTimeValue))
+        else if (componentParameterPropertyType.IsDateTime() && DateTime.TryParse(queryParameterValue, out var dateTimeValue))
             return dateTimeValue;
-        else if (componentParameterPropertyType.IsInt() && int.TryParse(queryParameterValue, NumericParseCultureInfo, out var intValue))
+        else if (componentParameterPropertyType.IsInt() && int.TryParse(queryParameterValue, out var intValue))
             return intValue;
-        else if (componentParameterPropertyType.IsDouble() && double.TryParse(queryParameterValue, NumericParseCultureInfo, out var doubleValue))
+        else if (componentParameterPropertyType.IsDouble() && double.TryParse(queryParameterValue, out var doubleValue))
             return doubleValue;
-        else if (componentParameterPropertyType.IsLong() && long.TryParse(queryParameterValue, NumericParseCultureInfo, out var longValue))
+        else if (componentParameterPropertyType.IsLong() && long.TryParse(queryParameterValue, out var longValue))
             return longValue;
-        else if (componentParameterPropertyType.IsDecimal() && decimal.TryParse(queryParameterValue, NumericParseCultureInfo, out var decimalValue))
+        else if (componentParameterPropertyType.IsDecimal() && decimal.TryParse(queryParameterValue, out var decimalValue))
             return decimalValue;
 
         return null;

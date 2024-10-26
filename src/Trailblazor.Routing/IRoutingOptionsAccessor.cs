@@ -1,4 +1,6 @@
-﻿namespace Trailblazor.Routing.DependencyInjection;
+﻿using Trailblazor.Routing.DependencyInjection;
+
+namespace Trailblazor.Routing;
 
 /// <summary>
 /// Service provides configured <see cref="RoutingOptions"/>.

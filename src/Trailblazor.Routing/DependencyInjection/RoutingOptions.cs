@@ -31,11 +31,6 @@ public sealed class RoutingOptions
     internal InternalRoutingProfile InternalRoutingProfile { get; } = new();
 
     /// <summary>
-    /// Parse options for parsing query parameters.
-    /// </summary>
-    public QueryParameterParseOptions QueryParameterParseOptions { get; set; } = QueryParameterParseOptions.Default();
-
-    /// <summary>
     /// Method registers all components with an '<c>@page</c>' directive or <see cref="RouteAttribute"/> to the <see cref="RoutingOptions"/>.
     /// </summary>
     /// <remarks>

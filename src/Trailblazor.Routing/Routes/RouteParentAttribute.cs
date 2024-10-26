@@ -1,4 +1,4 @@
-﻿namespace Trailblazor.Routing;
+﻿namespace Trailblazor.Routing.Routes;
 
 /// <summary>
 /// Attribute configures the parent component of a component.

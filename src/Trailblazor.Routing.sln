@@ -23,6 +23,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trailblazor.Routing.App.Hyb
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trailblazor.Routing.App.Hybrid.Client", "Trailblazor.Routing.App.Hybrid\Trailblazor.Routing.App.Hybrid.Client\Trailblazor.Routing.App.Hybrid.Client.csproj", "{C0894E64-FA93-41C7-A30C-B917521D20A7}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_", "_", "{0B2D5E29-CDE9-484E-952B-6794116BE08C}"
+	ProjectSection(SolutionItems) = preProject
+		..\README.md = ..\README.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

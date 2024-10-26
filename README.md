@@ -25,12 +25,6 @@ builder.Services.AddTrailblazorRouting(options =>
 
     // Register profiles explicitly
     options.AddProfile<RoutingProfile>();
-
-    // Configure query parameter parser options
-    options.QueryParameterParseOptions = new QueryParameterParseOptions()
-    {
-        DateTimeStyles = DateTimeStyles.AssumeUniversal,
-    };
 });
 ```
 
