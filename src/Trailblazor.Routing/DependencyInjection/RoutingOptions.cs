@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
-using Trailblazor.Routing.Constants;
 using Trailblazor.Routing.Exceptions;
 using Trailblazor.Routing.Profiles;
 using Trailblazor.Routing.Routes;
@@ -29,7 +28,7 @@ public sealed class RoutingOptions
     /// Internal routing profile. This is being used for all manually added component types or for component types bearing the
     /// '@page' directive or <see cref="RouteAttribute"/>.
     /// </summary>
-    private readonly InternalRoutingProfile _internalRoutingProfile = new();
+    internal InternalRoutingProfile InternalRoutingProfile { get; } = new();
 
     /// <summary>
     /// Parse options for parsing query parameters.
@@ -53,28 +52,12 @@ public sealed class RoutingOptions
     public RoutingOptions ScanForComponentsInAssemblies(params Assembly[] assemblies)
     {
         var componentBaseType = typeof(ComponentBase);
-        var routes = assemblies
+        var componentTypes = assemblies
             .SelectMany(a => a.GetTypes())
             .Where(t => !t.IsAbstract && t.IsAssignableTo(componentBaseType) && t.GetCustomAttributes<RouteAttribute>().Any())
-            .SelectMany(type => type
-                .GetCustomAttributes<RouteAttribute>()
-                .DistinctBy(attribute => attribute.Template)
-                .Select(attribute =>
-                {
-                    var route = new Route()
-                    {
-                        Uri = attribute.Template,
-                        Component = type,
-                    };
+            .ToList();
 
-                    route.SetMetadataValue(MetadataConstants.FromPageDirective, true);
-                    return route;
-                }))
-            .ToArray();
-
-        foreach (var route in routes)
-            _internalRoutingProfile.AddRoute(route);
-
+        InternalRoutingProfile.ComponentTypes.AddRange(componentTypes);
         return this;
     }
 
@@ -138,7 +121,7 @@ public sealed class RoutingOptions
     /// <returns><see cref="RoutingOptions"/> for further configurations.</returns>
     public RoutingOptions AddRoute(Route route)
     {
-        _internalRoutingProfile.AddRoute(route);
+        InternalRoutingProfile.AddRoute(route);
         return this;
     }
 
@@ -154,7 +137,7 @@ public sealed class RoutingOptions
         var builder = new RouteBuilder<TComponent>();
         builderAction.Invoke(builder);
 
-        _internalRoutingProfile.AddRoute(builder.Build());
+        InternalRoutingProfile.AddRoute(builder.Build());
         return this;
     }
 
@@ -181,14 +164,5 @@ public sealed class RoutingOptions
             .Distinct()
             .Where(t => !_routingProfileTypes.Any(other => other != t && other.IsSubclassOf(t)))
             .ToList();
-    }
-
-    /// <summary>
-    /// Method returns the internal navigation profile.
-    /// </summary>
-    /// <returns>Internal navigation profile.</returns>
-    internal InternalRoutingProfile GetInternalRoutingProfile()
-    {
-        return _internalRoutingProfile;
     }
 }

@@ -9,21 +9,16 @@ namespace Trailblazor.Routing;
 /// </summary>
 internal sealed class RouteProvider(
     IUriParser _uriParser,
-    IInternalRouteResolver _internalRouteResolver,
+    IInternalRouteCache _internalRouteResolver,
     NavigationManager _navigationManager) : IRouteProvider
 {
-    /// <summary>
-    /// Routes cached after resolving using the <see cref="IInternalRouteResolver"/>.
-    /// </summary>
-    private List<Route>? _routes;
-
     /// <summary>
     /// Method returns all registered routes.
     /// </summary>
     /// <returns>All registered routes.</returns>
     public IReadOnlyList<Route> GetRoutes()
     {
-        return _routes ??= _internalRouteResolver.ResolveRoutes();
+        return _internalRouteResolver.GetCachedRoutes();
     }
 
     /// <summary>
@@ -48,7 +43,7 @@ internal sealed class RouteProvider(
     public Route? FindRoute(string relativeUri)
     {
         relativeUri = _uriParser.RemoveQueryParameters(relativeUri);
-        return GetRoutes().Select(p => p.FindRoute(relativeUri)).Where(p => p != null).SingleOrDefault();
+        return _internalRouteResolver.GetCachedRoutes().Select(p => p.FindRoute(relativeUri)).Where(p => p != null).SingleOrDefault();
     }
 
     /// <summary>
@@ -58,7 +53,7 @@ internal sealed class RouteProvider(
     /// <returns>Routes associated with the specified <paramref name="componentType"/>.</returns>
     public List<Route> FindRoutes(Type componentType)
     {
-        return GetRoutes().SelectMany(p => p.FindRoutes(componentType)).ToList();
+        return _internalRouteResolver.GetCachedRoutes().SelectMany(p => p.FindRoutes(componentType)).ToList();
     }
 
     /// <summary>
